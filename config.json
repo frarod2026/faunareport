@@ -1,0 +1,40 @@
+{
+  "site_name": "Fauna Report",
+  "tagline": "What's happening to the world's animals, right now.",
+  "description": "Articles on conservation, discovery and the real state of the world's species — with a daily pick of wildlife news from the best sources.",
+  "base_url": "https://faunareport.org",
+  "lang": "en",
+  "locale": "en_US",
+  "author": "Fauna Report",
+  "twitter": "",
+  "posts_per_page": 10,
+  "radar_max_items": 24,
+  "radar_excerpt_chars": 180,
+  "feeds": [
+    {
+      "name": "Mongabay",
+      "url": "https://news.mongabay.com/feed/",
+      "site": "https://news.mongabay.com"
+    },
+    {
+      "name": "The Guardian — Wildlife",
+      "url": "https://www.theguardian.com/environment/wildlife/rss",
+      "site": "https://www.theguardian.com/environment/wildlife"
+    },
+    {
+      "name": "ScienceDaily — Plants & Animals",
+      "url": "https://www.sciencedaily.com/rss/plants_animals.xml",
+      "site": "https://www.sciencedaily.com"
+    },
+    {
+      "name": "ScienceDaily — Wild Animals",
+      "url": "https://www.sciencedaily.com/rss/plants_animals/wild_animals.xml",
+      "site": "https://www.sciencedaily.com"
+    },
+    {
+      "name": "Phys.org — Plants & Animals",
+      "url": "https://phys.org/rss-feed/biology-news/plants-animals/",
+      "site": "https://phys.org"
+    }
+  ]
+}

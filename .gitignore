@@ -1,0 +1,5 @@
+# pastas geradas automaticamente — não é preciso guardar
+dist/
+.cache/
+__pycache__/
+*.pyc
