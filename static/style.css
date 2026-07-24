@@ -1,0 +1,497 @@
+/* Oficina Web
+   Paleta: papel #F4F6F8 · tinta #12171C · régua #D6DCE2 · mudo #5E6B77
+           cobalto #1F3FD8 (o que é nosso) · âmbar #B0690A (o que vem de fora)
+   O par de cores não é decoração: cobalto marca conteúdo escrito aqui,
+   âmbar marca conteúdo alojado noutro sítio. */
+
+:root {
+  --papel: #f4f6f8;
+  --papel-fundo: #eaeef2;
+  --tinta: #12171c;
+  --regua: #d6dce2;
+  --mudo: #5e6b77;
+  --cobalto: #1f3fd8;
+  --cobalto-suave: #e6eafb;
+  --ambar: #b0690a;
+  --ambar-suave: #f7eddc;
+
+  --display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --corpo: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  --medida: 68ch;
+  --largura: 74rem;
+  --passo: clamp(2.5rem, 6vw, 5rem);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --papel: #12171c;
+    --papel-fundo: #0c1015;
+    --tinta: #eef2f6;
+    --regua: #2a333d;
+    --mudo: #94a2b0;
+    --cobalto: #8ea4ff;
+    --cobalto-suave: #1a2440;
+    --ambar: #e0a758;
+    --ambar-suave: #2a2113;
+  }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--papel);
+  color: var(--tinta);
+  font-family: var(--corpo);
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  font-optical-sizing: auto;
+}
+
+.linha {
+  width: min(100% - 2.5rem, var(--largura));
+  margin-inline: auto;
+}
+
+.skip {
+  position: absolute;
+  left: -9999px;
+  background: var(--tinta);
+  color: var(--papel);
+  padding: .75rem 1rem;
+  z-index: 10;
+}
+.skip:focus { left: 1rem; top: 1rem; }
+
+a { color: var(--cobalto); text-underline-offset: .18em; text-decoration-thickness: 1px; }
+a:hover { text-decoration-thickness: 2px; }
+
+:focus-visible {
+  outline: 2px solid var(--cobalto);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* ---------- cabeçalho ---------- */
+
+.topo {
+  border-bottom: 1px solid var(--regua);
+  padding-block: 1.25rem;
+  background: var(--papel);
+}
+
+.topo .linha {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 2rem;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.marca { text-decoration: none; color: inherit; display: block; }
+
+.marca-nome {
+  display: block;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1.35rem;
+  letter-spacing: -.02em;
+}
+
+.marca-sub {
+  display: block;
+  font-family: var(--mono);
+  font-size: .72rem;
+  color: var(--mudo);
+  letter-spacing: .01em;
+  margin-top: .1rem;
+}
+
+.topo nav {
+  display: flex;
+  gap: 1.5rem;
+  font-family: var(--mono);
+  font-size: .8rem;
+}
+
+.topo nav a { color: var(--mudo); text-decoration: none; }
+.topo nav a:hover { color: var(--tinta); }
+.topo nav a[aria-current="page"] {
+  color: var(--tinta);
+  box-shadow: inset 0 -2px 0 var(--cobalto);
+}
+
+/* ---------- blocos comuns ---------- */
+
+.sobrancelha {
+  font-family: var(--mono);
+  font-size: .72rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--mudo);
+  margin: 0 0 .9rem;
+}
+.sobrancelha a { color: inherit; }
+
+.meta {
+  font-family: var(--mono);
+  font-size: .78rem;
+  color: var(--mudo);
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  margin: .9rem 0 0;
+}
+
+.mudo { color: var(--mudo); }
+
+.etiquetas {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem;
+  padding: 0;
+  margin: .9rem 0 0;
+}
+
+.etiquetas li {
+  font-family: var(--mono);
+  font-size: .7rem;
+  color: var(--cobalto);
+  background: var(--cobalto-suave);
+  padding: .2rem .5rem;
+  border-radius: 2px;
+}
+
+/* ---------- hero ---------- */
+
+.hero {
+  width: min(100% - 2.5rem, var(--largura));
+  margin-inline: auto;
+  padding-block: var(--passo) calc(var(--passo) * .7);
+  border-bottom: 1px solid var(--regua);
+  max-width: min(100% - 2.5rem, 58rem);
+}
+
+.hero h1 {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(2.1rem, 6vw, 3.6rem);
+  line-height: 1.05;
+  letter-spacing: -.03em;
+  margin: 0;
+  text-wrap: balance;
+}
+
+.hero h1 a { color: inherit; text-decoration: none; }
+.hero h1 a:hover { text-decoration: underline; text-decoration-thickness: 3px; }
+
+.chamada {
+  font-size: 1.2rem;
+  color: var(--mudo);
+  max-width: var(--medida);
+  margin: 1rem 0 0;
+}
+
+/* ---------- secções ---------- */
+
+.seccao {
+  width: min(100% - 2.5rem, var(--largura));
+  margin-inline: auto;
+  padding-block: var(--passo);
+  border-bottom: 1px solid var(--regua);
+}
+
+.seccao:last-of-type { border-bottom: 0; }
+
+.seccao-cabeca {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 2rem;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+}
+
+.seccao-titulo {
+  font-family: var(--mono);
+  font-size: .78rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--tinta);
+  font-weight: 500;
+  margin: 0 0 2rem;
+  padding-bottom: .6rem;
+  border-bottom: 2px solid var(--tinta);
+  display: inline-block;
+}
+
+.seccao-cabeca .seccao-titulo { margin-bottom: 0; }
+
+.seccao-nota {
+  font-family: var(--mono);
+  font-size: .76rem;
+  color: var(--mudo);
+  margin: 0;
+  max-width: 42ch;
+}
+
+/* ---------- cartões (conteúdo próprio) ---------- */
+
+.grelha {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+  gap: 2rem;
+}
+
+.cartao {
+  border-top: 2px solid var(--tinta);
+  padding-top: 1.1rem;
+}
+
+.cartao-liga { text-decoration: none; color: inherit; display: block; }
+
+.cartao h3 {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1.3rem;
+  line-height: 1.2;
+  letter-spacing: -.015em;
+  margin: 0 0 .6rem;
+  text-wrap: balance;
+}
+
+.cartao-liga:hover h3 { color: var(--cobalto); }
+
+.cartao p { margin: 0; color: var(--mudo); font-size: .97rem; }
+
+/* ---------- radar (conteúdo externo) ---------- */
+
+.radar .seccao-titulo { border-bottom-color: var(--ambar); }
+
+.radar-lista {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border-top: 1px solid var(--regua);
+}
+
+.radar-item {
+  padding: 1.1rem 0;
+  border-bottom: 1px solid var(--regua);
+  display: grid;
+  gap: .35rem;
+}
+
+.radar-liga {
+  display: flex;
+  align-items: baseline;
+  gap: .5rem;
+  text-decoration: none;
+  color: var(--tinta);
+}
+
+.radar-titulo {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1.05rem;
+  line-height: 1.3;
+  letter-spacing: -.01em;
+}
+
+.radar-liga:hover .radar-titulo {
+  color: var(--ambar);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: .2em;
+}
+
+.seta {
+  width: .8em;
+  height: .8em;
+  flex: none;
+  color: var(--ambar);
+  transform: translateY(.05em);
+}
+
+.radar-resumo {
+  margin: 0;
+  color: var(--mudo);
+  font-size: .95rem;
+  max-width: var(--medida);
+}
+
+.radar-meta {
+  font-family: var(--mono);
+  font-size: .72rem;
+  color: var(--mudo);
+  display: flex;
+  flex-wrap: wrap;
+  gap: .75rem;
+  margin: .15rem 0 0;
+}
+
+.fonte {
+  color: var(--ambar);
+  background: var(--ambar-suave);
+  padding: .1rem .4rem;
+  border-radius: 2px;
+}
+
+.mais {
+  font-family: var(--mono);
+  font-size: .8rem;
+  margin: 1.5rem 0 0;
+}
+
+.fontes { font-family: var(--mono); font-size: .72rem; margin-top: 1.5rem; }
+
+.radar-pagina .seccao-titulo { font-size: .8rem; }
+
+/* ---------- artigo ---------- */
+
+.artigo {
+  width: min(100% - 2.5rem, var(--largura));
+  margin-inline: auto;
+  padding-block: var(--passo);
+}
+
+.artigo-cabeca {
+  max-width: var(--medida);
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--regua);
+  margin-bottom: 2.5rem;
+}
+
+.artigo-cabeca h1 {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(1.9rem, 5vw, 3rem);
+  line-height: 1.08;
+  letter-spacing: -.03em;
+  margin: 0;
+  text-wrap: balance;
+}
+
+.indice {
+  max-width: var(--medida);
+  margin: 0 0 2.5rem;
+  padding: 1.1rem 1.25rem;
+  background: var(--papel-fundo);
+  border-left: 2px solid var(--cobalto);
+}
+
+.indice-titulo {
+  font-family: var(--mono);
+  font-size: .72rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--mudo);
+  margin: 0 0 .6rem;
+}
+
+.indice ol {
+  margin: 0;
+  padding-left: 1.2rem;
+  font-family: var(--mono);
+  font-size: .82rem;
+  display: grid;
+  gap: .3rem;
+}
+
+.prosa { max-width: var(--medida); }
+
+.prosa h2 {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1.6rem;
+  letter-spacing: -.02em;
+  line-height: 1.2;
+  margin: 2.8rem 0 .8rem;
+  scroll-margin-top: 2rem;
+}
+
+.prosa h3 {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1.2rem;
+  letter-spacing: -.01em;
+  margin: 2rem 0 .6rem;
+}
+
+.prosa p { margin: 0 0 1.15rem; }
+
+.prosa ul, .prosa ol { margin: 0 0 1.15rem; padding-left: 1.3rem; }
+.prosa li { margin-bottom: .4rem; }
+
+.prosa blockquote {
+  margin: 1.8rem 0;
+  padding-left: 1.25rem;
+  border-left: 2px solid var(--ambar);
+  color: var(--mudo);
+  font-size: 1.05rem;
+}
+
+.prosa blockquote p { margin: 0; }
+
+.prosa code {
+  font-family: var(--mono);
+  font-size: .86em;
+  background: var(--papel-fundo);
+  padding: .12em .35em;
+  border-radius: 2px;
+}
+
+.prosa pre {
+  background: var(--papel-fundo);
+  border-left: 2px solid var(--regua);
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  margin: 0 0 1.5rem;
+  font-size: .86rem;
+  line-height: 1.55;
+}
+
+.prosa pre code { background: none; padding: 0; font-size: 1em; }
+
+.prosa hr {
+  border: 0;
+  border-top: 1px solid var(--regua);
+  margin: 2.5rem 0;
+}
+
+.prosa strong { font-weight: 600; }
+
+/* ---------- rodapé ---------- */
+
+.rodape {
+  border-top: 1px solid var(--regua);
+  padding-block: 2.5rem 3.5rem;
+  margin-top: var(--passo);
+  font-family: var(--mono);
+  font-size: .76rem;
+}
+
+.rodape p { margin: 0 0 .5rem; max-width: var(--medida); }
+.rodape a { color: var(--mudo); }
+.rodape a:hover { color: var(--cobalto); }
+
+/* ---------- impressão ---------- */
+
+@media print {
+  .topo nav, .radar, .indice, .rodape { display: none; }
+  body { background: #fff; color: #000; }
+  .prosa { max-width: none; }
+}
