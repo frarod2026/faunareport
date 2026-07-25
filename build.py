@@ -254,6 +254,9 @@ def load_documents(folder):
             "updated": parse_date(meta.get("updated")) or parse_date(meta.get("date")),
             "tags": meta.get("tags", []),
             "author": meta.get("author", ""),
+            "image": meta.get("image", ""),
+            "image_alt": meta.get("image_alt", ""),
+            "image_credit": meta.get("image_credit", ""),
             "html": body_html,
             "toc": toc,
             "plain": plain,
@@ -380,6 +383,40 @@ def collect_radar(config, offline=False):
 
 
 # --------------------------------------------------------------------------
+# imagery — real photo if provided, otherwise an on-brand gradient stand-in
+# --------------------------------------------------------------------------
+
+# Curated nature-toned gradient pairs (top-left -> bottom-right). On-brand,
+# never clashing. A photo dropped into static/images/ overrides these.
+GRADIENTS = [
+    ("#2e5c60", "#0e1c1e"),  # teal canopy
+    ("#3c5f2c", "#131f12"),  # moss
+    ("#8a5a1e", "#28190a"),  # warm ochre
+    ("#2a5c50", "#0e201c"),  # deep green
+    ("#2c4a68", "#101c28"),  # dusk blue
+    ("#4a5a2e", "#1a2012"),  # olive
+]
+
+
+def gradient_for(slug):
+    h = sum(ord(c) for c in slug)
+    a, b = GRADIENTS[h % len(GRADIENTS)]
+    return "linear-gradient(135deg, %s 0%%, %s 100%%)" % (a, b)
+
+
+def image_style(post):
+    """Inline background for a card/hero media area."""
+    if post.get("image"):
+        src = "/images/%s" % esc(post["image"])
+        return "background-image:url('%s');background-size:cover;background-position:center;" % src
+    return "background-image:%s;" % gradient_for(post["slug"])
+
+
+def has_photo(post):
+    return bool(post.get("image"))
+
+
+# --------------------------------------------------------------------------
 # templates
 # --------------------------------------------------------------------------
 
@@ -429,13 +466,13 @@ def head(config, *, title, description, path, page_type="website",
     return "\n  ".join(tags)
 
 
-def layout(config, *, head_html, body, active=""):
+def layout(config, *, head_html, body, active="", theme="dark"):
     def nav(href, label):
         cur = ' aria-current="page"' if active == label else ""
         return '<a href="%s"%s>%s</a>' % (href, cur, label)
 
     return """<!doctype html>
-<html lang="%(lang)s">
+<html lang="%(lang)s" class="theme-%(theme)s">
 <head>
   %(head)s
 </head>
@@ -470,6 +507,7 @@ def layout(config, *, head_html, body, active=""):
 </html>
 """ % {
         "lang": config.get("lang", "pt-PT"),
+        "theme": theme,
         "head": head_html,
         "site": esc(config["site_name"]),
         "tagline": esc(config["tagline"]),
@@ -479,26 +517,34 @@ def layout(config, *, head_html, body, active=""):
 
 
 def card(post):
-    tags = "".join('<li>%s</li>' % esc(t) for t in post["tags"][:3])
+    tag = esc(post["tags"][0]) if post["tags"] else ""
+    tag_html = '<span class="cartao-tag">%s</span>' % tag if tag else ""
+    photo_cls = " has-photo" if has_photo(post) else ""
+    alt = esc(post.get("image_alt") or post["title"])
+    aria = ' role="img" aria-label="%s"' % alt if has_photo(post) else ' aria-hidden="true"'
     return """      <article class="cartao">
         <a class="cartao-liga" href="/articles/%(slug)s/">
-          <h3>%(title)s</h3>
-          <p>%(desc)s</p>
+          <span class="cartao-media%(pcls)s" style="%(style)s"%(aria)s></span>
+          <div class="cartao-corpo">
+            %(tag)s
+            <h3>%(title)s</h3>
+            <p class="meta">
+              <time datetime="%(iso)s">%(data)s</time>
+              <span aria-hidden="true">·</span>
+              <span>%(rt)d min read</span>
+            </p>
+          </div>
         </a>
-        <p class="meta">
-          <time datetime="%(iso)s">%(data)s</time>
-          <span aria-hidden="true">·</span>
-          <span>%(rt)d min read</span>
-        </p>
-        %(tags)s
       </article>""" % {
         "slug": esc(post["slug"]),
         "title": esc(post["title"]),
-        "desc": esc(post["description"]),
+        "style": image_style(post),
+        "pcls": photo_cls,
+        "aria": aria,
+        "tag": tag_html,
         "iso": post["date"].isoformat() if post["date"] else "",
         "data": pt_date(post["date"]),
         "rt": post["read_time"],
-        "tags": '<ul class="etiquetas">%s</ul>' % tags if tags else "",
     }
 
 
@@ -555,18 +601,27 @@ def build_home(config, posts, radar):
 
     hero = ""
     if destaque:
+        pcls = " has-photo" if has_photo(destaque) else ""
+        alt = esc(destaque.get("image_alt") or destaque["title"])
+        aria = ' role="img" aria-label="%s"' % alt if has_photo(destaque) else ' aria-hidden="true"'
         hero = """    <section class="hero">
-      <p class="sobrancelha">Latest</p>
-      <h1><a href="/articles/%(slug)s/">%(title)s</a></h1>
-      <p class="chamada">%(desc)s</p>
-      <p class="meta">
-        <time datetime="%(iso)s">%(data)s</time>
-        <span aria-hidden="true">·</span>
-        <span>%(rt)d min read</span>
-      </p>
+      <a class="hero-liga" href="/articles/%(slug)s/">
+        <span class="hero-media%(pcls)s" style="%(style)s"%(aria)s></span>
+        <div class="hero-texto">
+          <p class="sobrancelha">Latest</p>
+          <h1>%(title)s</h1>
+          <p class="chamada">%(desc)s</p>
+          <p class="meta">
+            <time datetime="%(iso)s">%(data)s</time>
+            <span aria-hidden="true">·</span>
+            <span>%(rt)d min read</span>
+          </p>
+        </div>
+      </a>
     </section>""" % {
             "slug": esc(destaque["slug"]), "title": esc(destaque["title"]),
-            "desc": esc(destaque["description"]),
+            "desc": esc(destaque["description"]), "style": image_style(destaque),
+            "pcls": pcls, "aria": aria,
             "iso": destaque["date"].isoformat() if destaque["date"] else "",
             "data": pt_date(destaque["date"]), "rt": destaque["read_time"],
         }
@@ -654,6 +709,17 @@ def build_post(config, post, posts):
         tags = '<ul class="etiquetas">%s</ul>' % "".join(
             "<li>%s</li>" % esc(t) for t in post["tags"])
 
+    banner = ""
+    if has_photo(post):
+        alt = esc(post.get("image_alt") or post["title"])
+        credit = ""
+        if post.get("image_credit"):
+            credit = '<figcaption class="credito">%s</figcaption>' % esc(post["image_credit"])
+        banner = ("""      <figure class="artigo-banner">
+        <span class="banner-media has-photo" style="%s" role="img" aria-label="%s"></span>
+        %s
+      </figure>""" % (image_style(post), alt, credit))
+
     body = """    <article class="artigo">
       <header class="artigo-cabeca">
         <p class="sobrancelha"><a href="/">%(site)s</a> / Article</p>
@@ -666,6 +732,7 @@ def build_post(config, post, posts):
         </p>
         %(tags)s
       </header>
+%(banner)s
 %(toc)s
       <div class="prosa">
 %(html)s
@@ -677,7 +744,7 @@ def build_post(config, post, posts):
         "desc": esc(post["description"]),
         "iso": post["date"].isoformat() if post["date"] else "",
         "data": pt_date(post["date"]), "rt": post["read_time"],
-        "tags": tags, "toc": toc, "html": post["html"], "rel": rel,
+        "tags": tags, "banner": banner, "toc": toc, "html": post["html"], "rel": rel,
         "crumbs": json.dumps(crumbs, ensure_ascii=False),
     }
 
@@ -686,7 +753,7 @@ def build_post(config, post, posts):
                      published=post["date"], modified=post["updated"],
                      noindex=post["noindex"], jsonld=jsonld)
     write(DIST / "articles" / post["slug"] / "index.html",
-          layout(config, head_html=head_html, body=body))
+          layout(config, head_html=head_html, body=body, theme="light"))
 
 
 def build_radar(config, radar):
@@ -728,7 +795,7 @@ def build_page(config, page):
     head_html = head(config, title=page["title"], description=page["description"],
                      path="/%s/" % page["slug"], noindex=page["noindex"])
     write(DIST / page["slug"] / "index.html",
-          layout(config, head_html=head_html, body=body,
+          layout(config, head_html=head_html, body=body, theme="light",
                  active="About" if page["slug"] == "about" else ""))
 
 
@@ -842,9 +909,9 @@ def build_og_image(config):
         f_body = ImageFont.truetype("%s/DejaVuSerif.ttf" % fd, 34)
         f_mono = ImageFont.truetype("%s/DejaVuSansMono.ttf" % fd, 26)
 
-        img = Image.new("RGB", (1200, 630), "#12171C")
+        img = Image.new("RGB", (1200, 630), "#101c17")
         d = ImageDraw.Draw(img)
-        d.rectangle([0, 0, 1200, 10], fill="#8EA4FF")
+        d.rectangle([0, 0, 1200, 10], fill="#5fb27a")
 
         def wrap(text, font, max_w):
             words, lines, line = text.split(), [], ""
@@ -862,13 +929,13 @@ def build_og_image(config):
 
         y = 250
         for ln in wrap(name, f_bold, 1040):
-            d.text((80, y), ln, font=f_bold, fill="#F4F6F8")
+            d.text((80, y), ln, font=f_bold, fill="#f1eee2")
             y += 96
         y += 6
         for ln in wrap(tagline, f_body, 1040)[:2]:
             d.text((80, y), ln, font=f_body, fill="#9AA6B2")
             y += 46
-        d.text((80, 560), domain, font=f_mono, fill="#8EA4FF")
+        d.text((80, 560), domain, font=f_mono, fill="#5fb27a")
 
         img.save(DIST / "og.png", "PNG")
         OG_EXT = "png"
@@ -878,8 +945,8 @@ def build_og_image(config):
 
     svg = ("<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1200\" height=\"630\" "
            "viewBox=\"0 0 1200 630\">\n"
-           "  <rect width=\"1200\" height=\"630\" fill=\"#12171C\"/>\n"
-           "  <rect x=\"0\" y=\"0\" width=\"1200\" height=\"10\" fill=\"#8EA4FF\"/>\n"
+           "  <rect width=\"1200\" height=\"630\" fill=\"#101c17\"/>\n"
+           "  <rect x=\"0\" y=\"0\" width=\"1200\" height=\"10\" fill=\"#5fb27a\"/>\n"
            "  <text x=\"80\" y=\"300\" font-family=\"Helvetica, sans-serif\" font-size=\"86\" "
            "font-weight=\"700\" fill=\"#F4F6F8\">%s</text>\n"
            "  <text x=\"80\" y=\"372\" font-family=\"Georgia, serif\" font-size=\"34\" "
