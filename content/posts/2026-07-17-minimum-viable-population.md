@@ -5,6 +5,7 @@ date: 2026-07-17
 updated: 2026-07-17
 tags: conservation, genetics, populations
 slug: minimum-viable-population
+image: minimum-viable-population.jpg
 ---
 
 There's a grim possibility in conservation that headcounts alone can hide: a population large enough to look safe can already be past the point of recovery. Understanding why means looking past the number of animals to two things that number doesn't show — their genes, and their luck.
