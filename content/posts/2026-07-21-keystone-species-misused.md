@@ -1,5 +1,5 @@
 ---
-title: Keystone species: a powerful idea, often misused
+title: "Keystone species: a powerful idea, often misused"
 description: Not every important animal is a keystone species. What the term actually means, where it came from, and why it gets stretched past breaking.
 date: 2026-07-21
 updated: 2026-07-21
