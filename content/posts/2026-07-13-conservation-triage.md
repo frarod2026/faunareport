@@ -1,10 +1,11 @@
 ---
-title: Conservation triage: choosing what to save
+title: "Conservation triage: choosing what to save"
 description: There isn't enough money to save everything. Whether conservation should openly decide what to let go is one of the field's most uncomfortable debates.
 date: 2026-07-13
 updated: 2026-07-13
 tags: conservation, ethics, policy
 slug: conservation-triage
+image: conservation-triage.jpg
 ---
 
 Conservation has a budget, and it's far smaller than the problem. That simple fact leads to one of the most uncomfortable questions in the field: if you can't save everything, should you decide, deliberately and in advance, what to let go? The word borrowed for this is **triage**, and the argument over it cuts to what conservation is for.
