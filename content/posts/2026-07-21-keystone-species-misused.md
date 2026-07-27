@@ -5,6 +5,7 @@ date: 2026-07-21
 updated: 2026-07-21
 tags: ecology, keystone species, concepts
 slug: keystone-species-misused
+image: keystone-species-misused.jpg
 ---
 
 Few ecological terms have escaped into everyday language as successfully as "keystone species", and few have been stretched as far out of shape in the process. It's now applied to more or less any animal someone wants to argue is important. The original idea was much more specific, and much more interesting.
