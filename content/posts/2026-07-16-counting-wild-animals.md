@@ -5,6 +5,7 @@ date: 2026-07-16
 updated: 2026-07-16
 tags: science, populations, methods
 slug: counting-wild-animals
+image: counting-wild-animals.jpg
 ---
 
 "Fewer than 4,000 tigers remain in the wild." Sentences like this appear every week. People rarely ask the obvious question: how do you count something that hides, moves, and lives scattered across forests no one enters?
