@@ -1,5 +1,5 @@
 ---
-title: How extinction gets declared, and why it takes so long
+title: "How extinction gets declared, and why it takes so long"
 description: Proving a species is gone is harder than it sounds. The delay is deliberate — and it's why "rediscovered" species keep making the news.
 date: 2026-07-20
 updated: 2026-07-20
