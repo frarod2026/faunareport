@@ -5,6 +5,7 @@ date: 2026-07-20
 updated: 2026-07-20
 tags: conservation, extinction, IUCN
 slug: how-extinction-is-declared
+how-extinction-is-declared.jpg
 ---
 
 Declaring a species extinct sounds like it should be simple: no one has seen it, so it's gone. In practice it's one of the slowest, most cautious judgements in conservation, and the caution is the point. Getting it wrong in either direction has real costs.
