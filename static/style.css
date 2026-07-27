@@ -222,3 +222,17 @@ a { color: var(--link); text-underline-offset: .18em; }
   body { background: #fff; color: #000; }
   .prosa { max-width: none; }
 }
+
+/* ---------- brand mark + homepage rhythm (added) ---------- */
+.marca { display: flex; align-items: center; gap: .65rem; }
+.marca-icone { width: 2.1rem; height: 2.1rem; flex: none; color: var(--accent);
+  fill: currentColor; }
+.marca-textos { display: block; }
+
+.destaques { display: grid; grid-template-columns: 1fr 1fr; gap: 1.8rem 1.6rem;
+  margin-bottom: 2.6rem; }
+.destaques .cartao-media { aspect-ratio: 3 / 2; }
+.destaques .cartao h3 { font-size: 1.55rem; }
+.destaques .cartao-tag { font-size: .72rem; }
+
+@media (max-width: 46rem) { .destaques { grid-template-columns: 1fr; } }

@@ -229,7 +229,9 @@ def parse_front_matter(raw):
                 if ":" not in line:
                     continue
                 key, _, value = line.partition(":")
-                value = value.strip().strip('"').strip("'")
+                value = value.strip()
+                if len(value) >= 2 and value[0] == value[-1] and value[0] in ('"', "'"):
+                    value = value[1:-1]  # strip only matching surrounding quotes
                 key = key.strip()
                 if key in ("tags", "keywords"):
                     meta[key] = [t.strip() for t in value.split(",") if t.strip()]
@@ -434,6 +436,10 @@ def head(config, *, title, description, path, page_type="website",
         '<meta name="description" content="%s">' % esc(description),
         '<meta name="robots" content="%s">' % robots,
         '<link rel="canonical" href="%s">' % esc(url),
+        '<link rel="icon" href="/favicon.svg" type="image/svg+xml">',
+        '<link rel="icon" href="/favicon.ico" sizes="any">',
+        '<link rel="apple-touch-icon" href="/apple-touch-icon.png">',
+        '<meta name="theme-color" content="#101c17">',
         '<meta property="og:type" content="%s">' % page_type,
         '<meta property="og:title" content="%s">' % esc(full_title),
         '<meta property="og:description" content="%s">' % esc(description),
@@ -481,8 +487,17 @@ def layout(config, *, head_html, body, active="", theme="dark"):
   <header class="topo">
     <div class="linha">
       <a class="marca" href="/">
-        <span class="marca-nome">%(site)s</span>
-        <span class="marca-sub">%(tagline)s</span>
+        <svg class="marca-icone" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="6.2" cy="9.4" r="2.5"/>
+          <circle cx="10.6" cy="6.4" r="2.7"/>
+          <circle cx="15.4" cy="6.4" r="2.7"/>
+          <circle cx="19.8" cy="9.4" r="2.5"/>
+          <path d="M12 10.4c3.2 0 5.9 2.2 5.9 4.9 0 2.1-1.9 3.1-3.4 3.1-1 0-1.7-.5-2.5-.5s-1.5.5-2.5.5c-1.5 0-3.4-1-3.4-3.1 0-2.7 2.7-4.9 5.9-4.9z"/>
+        </svg>
+        <span class="marca-textos">
+          <span class="marca-nome">%(site)s</span>
+          <span class="marca-sub">%(tagline)s</span>
+        </span>
       </a>
       <nav aria-label="Main">
         %(nav)s
@@ -597,7 +612,8 @@ def build_home(config, posts, radar):
         ],
     }
     destaque = posts[0] if posts else None
-    resto = posts[1:] if posts else []
+    featured = posts[1:3]
+    resto = posts[3:]
 
     hero = ""
     if destaque:
@@ -627,13 +643,18 @@ def build_home(config, posts, radar):
         }
 
     grelha = ""
-    if resto:
+    if featured or resto:
+        blocos = []
+        if featured:
+            blocos.append('      <div class="destaques">\n%s\n      </div>'
+                          % "\n".join(card(p) for p in featured))
+        if resto:
+            blocos.append('      <div class="grelha">\n%s\n      </div>'
+                          % "\n".join(card(p) for p in resto))
         grelha = """    <section class="seccao" aria-labelledby="more-articles">
       <h2 id="more-articles" class="seccao-titulo">Written here</h2>
-      <div class="grelha">
 %s
-      </div>
-    </section>""" % "\n".join(card(p) for p in resto)
+    </section>""" % "\n".join(blocos)
 
     radar_bloco = """    <section class="seccao radar" aria-labelledby="radar-titulo">
       <div class="seccao-cabeca">
