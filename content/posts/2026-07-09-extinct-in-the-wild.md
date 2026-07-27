@@ -1,5 +1,5 @@
 ---
-title: "Extinct in the Wild": the category almost no one understands"
+title: ""Extinct in the Wild": the category almost no one understands"
 description: Between "still here" and "gone" sits a strange state — species that survive only because we keep them alive. What it means, and why it's so hard to leave.
 date: 2026-07-09
 updated: 2026-07-09
