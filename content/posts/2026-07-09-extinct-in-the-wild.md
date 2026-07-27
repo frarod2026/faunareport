@@ -1,10 +1,11 @@
 ---
-title: "Extinct in the Wild": the category almost no one understands
+title: "Extinct in the Wild": the category almost no one understands"
 description: Between "still here" and "gone" sits a strange state — species that survive only because we keep them alive. What it means, and why it's so hard to leave.
 date: 2026-07-09
 updated: 2026-07-09
 tags: conservation, extinction, captivity
 slug: extinct-in-the-wild
+image: extinct-in-the-wild.jpg
 ---
 
 There's a category on the Red List that reads like a contradiction: Extinct in the Wild. It isn't "extinct", and it isn't "still out there". It's the gap between the two, and it's home to a few dozen species across the whole world.
