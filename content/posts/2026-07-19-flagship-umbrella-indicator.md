@@ -1,10 +1,11 @@
 ---
-title: Flagship, umbrella, indicator: the species we choose to save others
+title: "Flagship, umbrella, indicator: the species we choose to save others"
 description: The panda isn't protected only for its own sake. A guide to the strategic roles conservation assigns to particular species — and the risks of each.
 date: 2026-07-19
 updated: 2026-07-19
 tags: conservation, strategy, species
 slug: flagship-umbrella-indicator
+image: flagship-umbrella-indicator.jpg
 ---
 
 Conservation can't focus on everything at once, so it focuses on particular species and hopes the benefit spreads. But "we're saving this animal" can mean several very different strategies, each with its own logic and its own failure mode. Three terms do most of the work, and they're routinely confused.
