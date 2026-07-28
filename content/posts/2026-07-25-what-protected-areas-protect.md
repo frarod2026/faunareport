@@ -6,6 +6,7 @@ updated: 2026-07-25
 tags: conservation, protected areas, policy
 slug: what-protected-areas-protect
 image: what-protected-areas-protect.jpg
+image_alt: "A herd of aoudad (Barbary sheep) on scrubland, with woodland behind."
 ---
 
 Governments like to announce the percentage of their land or sea that is "protected". It's a clean number, easy to put in a headline and easy to compare against a target. It's also one of the most misleading figures in conservation, because a protected area is a legal designation, not a physical fact — and the gap between the two is where most of the trouble lives.
