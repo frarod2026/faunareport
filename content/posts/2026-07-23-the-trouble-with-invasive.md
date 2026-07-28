@@ -6,6 +6,7 @@ updated: 2026-07-23
 tags: ecology, invasive species, definitions
 slug: the-trouble-with-invasive
 image: the-trouble-with-invasive.jpg
+image_alt: "A flock of starlings flying over a bare tree."
 ---
 
 "Invasive species" is one of the few pieces of ecology that reliably makes the news, usually attached to a photo of something with teeth or a startling reproduction rate. It's also a term used far more loosely than the science behind it, and the looseness matters, because being labelled invasive can be a death sentence for a population.
