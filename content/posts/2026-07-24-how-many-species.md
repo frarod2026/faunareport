@@ -6,6 +6,7 @@ updated: 2026-07-24
 tags: taxonomy, species, science
 slug: how-many-species
 image: how-many-species.jpg
+image_alt: "A dead-nettle leaf beetle with an iridescent green and purple shell."
 ---
 
 Ask how many species share the planet with us and you'll get answers that disagree by an order of magnitude. Around 1.5 million have been formally named and described. Estimates of the true total commonly land near 8.7 million, but serious figures range from about 2 million to over 100 million once you include the least-known groups.
