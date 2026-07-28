@@ -6,6 +6,7 @@ updated: 2026-07-22
 tags: conservation, IUCN, species
 slug: reading-the-red-list
 image: reading-the-red-list.jpg
+image_alt: "A red panda perched on a large tree branch in a natural environment."
 ---
 
 When a headline says a species is "Vulnerable" or "Endangered", it's quoting the Red List of the International Union for Conservation of Nature. It's the most widely used system in the world for classifying extinction risk. And it's read wrong most of the time.
