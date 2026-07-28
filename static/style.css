@@ -72,13 +72,13 @@ a { color: var(--link); text-underline-offset: .18em; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 3px; }
 
 /* ---------- header ---------- */
-.topo { border-bottom: 1px solid var(--line); padding-block: 1.15rem; }
+.topo { border-bottom: 1px solid var(--line); padding-block: 1.4rem; }
 .topo .linha { display: flex; flex-wrap: wrap; gap: 1rem 2rem;
   align-items: baseline; justify-content: space-between; }
 .marca { text-decoration: none; color: inherit; }
 .marca-nome { display: block; font-family: var(--display); font-weight: 700;
-  font-size: 1.4rem; letter-spacing: -.02em; }
-.marca-sub { display: block; font-family: var(--mono); font-size: .72rem;
+  font-size: clamp(1.65rem, 3.6vw, 2.15rem); letter-spacing: -.025em; line-height: 1.05; }
+.marca-sub { display: block; font-family: var(--mono); font-size: .8rem;
   color: var(--muted); margin-top: .12rem; }
 .topo nav { display: flex; gap: 1.4rem; font-family: var(--mono); font-size: .82rem; }
 .topo nav a { color: var(--muted); text-decoration: none; }
@@ -225,7 +225,7 @@ a { color: var(--link); text-underline-offset: .18em; }
 
 /* ---------- brand mark + homepage rhythm (added) ---------- */
 .marca { display: flex; align-items: center; gap: .65rem; }
-.marca-icone { width: 2.1rem; height: 2.1rem; flex: none; color: var(--accent);
+.marca-icone { width: 2.7rem; height: 2.7rem; flex: none; color: var(--accent);
   fill: currentColor; }
 .marca-textos { display: block; }
 
@@ -236,3 +236,9 @@ a { color: var(--link); text-underline-offset: .18em; }
 .destaques .cartao-tag { font-size: .72rem; }
 
 @media (max-width: 46rem) { .destaques { grid-template-columns: 1fr; } }
+
+/* ---------- real images (SEO + a11y + lazy) ---------- */
+.media-img { display: block; width: 100%; height: 100%; object-fit: cover;
+  border-radius: inherit; }
+.cartao-media, .banner-media, .hero-media { overflow: hidden; }
+.cartao-media, .banner-media { background-color: var(--bg-2); }

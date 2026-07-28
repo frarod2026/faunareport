@@ -418,16 +418,30 @@ def has_photo(post):
     return bool(post.get("image"))
 
 
+def media_html(post, css_class, *, eager=False):
+    """A real <img> when a photo exists (visible to search, has alt text, lazy
+    loads below the fold); otherwise the on-brand gradient stand-in."""
+    if has_photo(post):
+        alt = esc(post.get("image_alt") or post["title"])
+        load = 'loading="eager" fetchpriority="high"' if eager else 'loading="lazy"'
+        return ('<span class="%s"><img class="media-img" src="/images/%s" alt="%s" '
+                '%s decoding="async"></span>') % (css_class, esc(post["image"]), alt, load)
+    return ('<span class="%s" style="background-image:%s" aria-hidden="true"></span>'
+            % (css_class, gradient_for(post["slug"])))
+
+
 # --------------------------------------------------------------------------
 # templates
 # --------------------------------------------------------------------------
 
 def head(config, *, title, description, path, page_type="website",
-         published=None, modified=None, noindex=False, jsonld=None):
+         published=None, modified=None, noindex=False, jsonld=None, og_image=None):
     base = config["base_url"].rstrip("/")
     url = base + path
     full_title = title if title == config["site_name"] else "%s — %s" % (title, config["site_name"])
     robots = "noindex, follow" if noindex else "index, follow, max-image-preview:large, max-snippet:-1"
+    share_image = og_image or "%s/og.%s" % (base, OG_EXT)
+    default_share = share_image.endswith("/og.%s" % OG_EXT)
 
     tags = [
         '<meta charset="utf-8">',
@@ -446,13 +460,15 @@ def head(config, *, title, description, path, page_type="website",
         '<meta property="og:url" content="%s">' % esc(url),
         '<meta property="og:site_name" content="%s">' % esc(config["site_name"]),
         '<meta property="og:locale" content="%s">' % esc(config.get("locale", "pt_PT")),
-        '<meta property="og:image" content="%s/og.%s">' % (esc(base), OG_EXT),
+        '<meta property="og:image" content="%s">' % esc(share_image),
+    ] + ([
         '<meta property="og:image:width" content="1200">',
         '<meta property="og:image:height" content="630">',
+    ] if default_share else []) + [
         '<meta name="twitter:card" content="summary_large_image">',
         '<meta name="twitter:title" content="%s">' % esc(full_title),
         '<meta name="twitter:description" content="%s">' % esc(description),
-        '<meta name="twitter:image" content="%s/og.%s">' % (esc(base), OG_EXT),
+        '<meta name="twitter:image" content="%s">' % esc(share_image),
         '<link rel="alternate" type="application/rss+xml" title="%s" href="%s/feed.xml">' % (
             esc(config["site_name"]), esc(base)),
         '<link rel="preconnect" href="https://fonts.googleapis.com">',
@@ -534,12 +550,9 @@ def layout(config, *, head_html, body, active="", theme="dark"):
 def card(post):
     tag = esc(post["tags"][0]) if post["tags"] else ""
     tag_html = '<span class="cartao-tag">%s</span>' % tag if tag else ""
-    photo_cls = " has-photo" if has_photo(post) else ""
-    alt = esc(post.get("image_alt") or post["title"])
-    aria = ' role="img" aria-label="%s"' % alt if has_photo(post) else ' aria-hidden="true"'
     return """      <article class="cartao">
         <a class="cartao-liga" href="/articles/%(slug)s/">
-          <span class="cartao-media%(pcls)s" style="%(style)s"%(aria)s></span>
+          %(media)s
           <div class="cartao-corpo">
             %(tag)s
             <h3>%(title)s</h3>
@@ -553,9 +566,7 @@ def card(post):
       </article>""" % {
         "slug": esc(post["slug"]),
         "title": esc(post["title"]),
-        "style": image_style(post),
-        "pcls": photo_cls,
-        "aria": aria,
+        "media": media_html(post, "cartao-media"),
         "tag": tag_html,
         "iso": post["date"].isoformat() if post["date"] else "",
         "data": pt_date(post["date"]),
@@ -617,12 +628,9 @@ def build_home(config, posts, radar):
 
     hero = ""
     if destaque:
-        pcls = " has-photo" if has_photo(destaque) else ""
-        alt = esc(destaque.get("image_alt") or destaque["title"])
-        aria = ' role="img" aria-label="%s"' % alt if has_photo(destaque) else ' aria-hidden="true"'
         hero = """    <section class="hero">
       <a class="hero-liga" href="/articles/%(slug)s/">
-        <span class="hero-media%(pcls)s" style="%(style)s"%(aria)s></span>
+        %(media)s
         <div class="hero-texto">
           <p class="sobrancelha">Latest</p>
           <h1>%(title)s</h1>
@@ -636,8 +644,8 @@ def build_home(config, posts, radar):
       </a>
     </section>""" % {
             "slug": esc(destaque["slug"]), "title": esc(destaque["title"]),
-            "desc": esc(destaque["description"]), "style": image_style(destaque),
-            "pcls": pcls, "aria": aria,
+            "desc": esc(destaque["description"]),
+            "media": media_html(destaque, "hero-media", eager=True),
             "iso": destaque["date"].isoformat() if destaque["date"] else "",
             "data": pt_date(destaque["date"]), "rt": destaque["read_time"],
         }
@@ -695,6 +703,8 @@ def build_post(config, post, posts):
         jsonld["dateModified"] = post["updated"].isoformat()
     if post["tags"]:
         jsonld["keywords"] = ", ".join(post["tags"])
+    if has_photo(post):
+        jsonld["image"] = "%s/images/%s" % (base, post["image"])
 
     crumbs = {
         "@context": "https://schema.org", "@type": "BreadcrumbList",
@@ -732,14 +742,13 @@ def build_post(config, post, posts):
 
     banner = ""
     if has_photo(post):
-        alt = esc(post.get("image_alt") or post["title"])
         credit = ""
         if post.get("image_credit"):
             credit = '<figcaption class="credito">%s</figcaption>' % esc(post["image_credit"])
         banner = ("""      <figure class="artigo-banner">
-        <span class="banner-media has-photo" style="%s" role="img" aria-label="%s"></span>
         %s
-      </figure>""" % (image_style(post), alt, credit))
+        %s
+      </figure>""" % (media_html(post, "banner-media", eager=True), credit))
 
     body = """    <article class="artigo">
       <header class="artigo-cabeca">
@@ -769,10 +778,12 @@ def build_post(config, post, posts):
         "crumbs": json.dumps(crumbs, ensure_ascii=False),
     }
 
+    base_url = config["base_url"].rstrip("/")
+    art_og = "%s/images/%s" % (base_url, post["image"]) if has_photo(post) else None
     head_html = head(config, title=post["title"], description=post["description"],
                      path="/articles/%s/" % post["slug"], page_type="article",
                      published=post["date"], modified=post["updated"],
-                     noindex=post["noindex"], jsonld=jsonld)
+                     noindex=post["noindex"], jsonld=jsonld, og_image=art_og)
     write(DIST / "articles" / post["slug"] / "index.html",
           layout(config, head_html=head_html, body=body, theme="light"))
 
