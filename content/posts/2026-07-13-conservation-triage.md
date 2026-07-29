@@ -6,6 +6,7 @@ updated: 2026-07-13
 tags: conservation, ethics, policy
 slug: conservation-triage
 image: conservation-triage.jpg
+image_alt: "A group of young African elephants covered in distinctive red mud."
 ---
 
 Conservation has a budget, and it's far smaller than the problem. That simple fact leads to one of the most uncomfortable questions in the field: if you can't save everything, should you decide, deliberately and in advance, what to let go? The word borrowed for this is **triage**, and the argument over it cuts to what conservation is for.
