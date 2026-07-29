@@ -6,6 +6,7 @@ updated: 2026-07-14
 tags: conservation, migration, connectivity
 slug: why-migratory-animals-are-hardest
 image: why-migratory-animals-are-hardest.jpg
+image_alt: "A large herd of wildebeest grazing on a vast green savanna under a cloudy sky."
 ---
 
 Protecting a species that stays put is hard enough. Protecting one that travels thousands of kilometres across borders, habitats, and jurisdictions is a different order of problem — and it exposes a weakness in how conservation is usually organised.
