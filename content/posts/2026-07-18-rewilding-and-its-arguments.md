@@ -6,6 +6,7 @@ updated: 2026-07-18
 tags: conservation, rewilding, debate
 slug: rewilding-and-its-arguments
 image: rewilding-and-its-arguments.jpg
+image_alt: "A vast expanse of lush green wilderness under a soft, hazy sky."
 ---
 
 Rewilding is one of the most hopeful ideas in modern conservation, and one of the most argued-over. The basic pitch is appealing: instead of managing every hectare intensively, step back, restore natural processes, and let ecosystems repair themselves. But underneath that simple picture sit several hard choices, and most of the disagreement is about them.
