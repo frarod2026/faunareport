@@ -6,6 +6,7 @@ updated: 2026-07-15
 tags: taxonomy, naming, science
 slug: how-animals-get-scientific-names
 image: how-animals-get-scientific-names.jpg
+image_alt: "A large collection of pinned butterfly and moth specimens on a light, neutral background."
 ---
 
 Every known animal carries a two-word scientific name, italicised and often Latin. It looks like a formality — a stuffy label sitting beside the common name that everyone actually uses. It's really a piece of infrastructure, and the system behind it is more rigorous, and more interesting, than the names suggest.
