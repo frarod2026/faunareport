@@ -242,3 +242,35 @@ a { color: var(--link); text-underline-offset: .18em; }
   border-radius: inherit; }
 .cartao-media, .banner-media, .hero-media { overflow: hidden; }
 .cartao-media, .banner-media { background-color: var(--bg-2); }
+
+/* ---------- topics + search (Fase 2) ---------- */
+.topic-lista { list-style: none; padding: 0; margin: 2rem 0 0;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr)); gap: 1rem; }
+.topic-lista a { display: flex; justify-content: space-between; align-items: baseline;
+  gap: 1rem; text-decoration: none; color: var(--ink);
+  padding: 1rem 1.15rem; background: var(--bg-2); border-radius: 10px;
+  border: 1px solid var(--line); transition: border-color .15s ease; }
+.topic-lista a:hover { border-color: var(--accent); }
+.topic-nome { font-family: var(--display); font-weight: 600; font-size: 1.1rem; letter-spacing: -.01em;
+  text-transform: capitalize; }
+.topic-conta { font-family: var(--mono); font-size: .74rem; color: var(--muted); flex: none; }
+
+/* article tag links */
+.etiquetas a { text-decoration: none; color: var(--accent); }
+.etiquetas a:hover { text-decoration: underline; text-underline-offset: .2em; }
+
+/* search */
+.busca { max-width: var(--measure); margin-top: 2rem; }
+.busca input { width: 100%; font-family: var(--serif); font-size: 1.15rem;
+  padding: .85rem 1.1rem; color: var(--ink); background: var(--bg-2);
+  border: 1px solid var(--line); border-radius: 10px; }
+.busca input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-color: var(--accent); }
+.busca-nota { font-family: var(--mono); font-size: .78rem; color: var(--muted); margin: .8rem 0 1.5rem; }
+.busca-res { list-style: none; padding: 0; margin: 0; display: grid; gap: 1rem; }
+.busca-res a { display: block; text-decoration: none; color: var(--ink);
+  padding-bottom: 1rem; border-bottom: 1px solid var(--line); }
+.busca-titulo { display: block; font-family: var(--display); font-weight: 600;
+  font-size: 1.2rem; letter-spacing: -.015em; }
+.busca-res a:hover .busca-titulo { color: var(--accent); }
+.busca-desc { display: block; color: var(--muted); font-size: .95rem; margin-top: .3rem; }
+.etiquetas li.plain { color: var(--muted); }

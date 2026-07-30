@@ -542,7 +542,9 @@ def layout(config, *, head_html, body, active="", theme="dark"):
         "head": head_html,
         "site": esc(config["site_name"]),
         "tagline": esc(config["tagline"]),
-        "nav": "\n        ".join([nav("/", "Home"), nav("/radar/", "Radar"), nav("/about/", "About")]),
+        "nav": "\n        ".join([nav("/", "Home"), nav("/topics/", "Topics"),
+                                  nav("/radar/", "Radar"), nav("/search/", "Search"),
+                                  nav("/about/", "About")]),
         "body": body,
     }
 
@@ -681,7 +683,7 @@ def build_home(config, posts, radar):
     write(DIST / "index.html", layout(config, head_html=head_html, body=body, active="Home"))
 
 
-def build_post(config, post, posts):
+def build_post(config, post, posts, topic_tags=frozenset()):
     base = config["base_url"].rstrip("/")
     url = "%s/articles/%s/" % (base, post["slug"])
     jsonld = {
@@ -725,7 +727,17 @@ def build_post(config, post, posts):
       </nav>""" % "\n".join('          <li><a href="#%s">%s</a></li>' % (esc(h), esc(t))
                             for h, t in post["toc"])
 
-    relacionados = [p for p in posts if p["slug"] != post["slug"]][:2]
+    # related by shared tags, then filled with most recent
+    my_tags = set(post["tags"])
+    scored = []
+    for p in posts:
+        if p["slug"] == post["slug"]:
+            continue
+        shared = len(my_tags & set(p["tags"]))
+        scored.append((shared, p))
+    scored.sort(key=lambda sp: (sp[0], sp[1]["date"] or datetime.min.replace(tzinfo=timezone.utc)),
+                reverse=True)
+    relacionados = [p for _, p in scored[:3]]
     rel = ""
     if relacionados:
         rel = """    <section class="seccao" aria-labelledby="read-next">
@@ -737,8 +749,11 @@ def build_post(config, post, posts):
 
     tags = ""
     if post["tags"]:
-        tags = '<ul class="etiquetas">%s</ul>' % "".join(
-            "<li>%s</li>" % esc(t) for t in post["tags"])
+        def tag_li(t):
+            if t in topic_tags:
+                return '<li><a href="/topics/%s/">%s</a></li>' % (slugify(t), esc(t))
+            return '<li class="plain">%s</li>' % esc(t)
+        tags = '<ul class="etiquetas">%s</ul>' % "".join(tag_li(t) for t in post["tags"])
 
     banner = ""
     if has_photo(post):
@@ -813,6 +828,131 @@ def build_radar(config, radar):
     write(DIST / "radar" / "index.html", layout(config, head_html=head_html, body=body, active="Radar"))
 
 
+def qualifying_topics(posts, minimum=2):
+    """Tags with enough articles to deserve their own page (avoids thin pages)."""
+    counts = {}
+    for p in posts:
+        if p["noindex"]:
+            continue
+        for t in p["tags"]:
+            counts[t] = counts.get(t, 0) + 1
+    return {t for t, n in counts.items() if n >= minimum}
+
+
+def build_topics(config, posts, topic_tags):
+    """One hub page per qualifying tag, plus a topics index."""
+    tag_map = {}
+    for p in posts:
+        if p["noindex"]:
+            continue
+        for t in p["tags"]:
+            if t in topic_tags:
+                tag_map.setdefault(t, []).append(p)
+
+    # index of all topics
+    if tag_map:
+        rows = []
+        for tag in sorted(tag_map, key=lambda t: (-len(tag_map[t]), t.lower())):
+            n = len(tag_map[tag])
+            rows.append(
+                '        <li><a href="/topics/%s/"><span class="topic-nome">%s</span>'
+                '<span class="topic-conta">%d article%s</span></a></li>'
+                % (slugify(tag), esc(tag), n, "" if n == 1 else "s"))
+        body = """    <section class="seccao">
+      <p class="sobrancelha">Browse</p>
+      <h1 class="seccao-titulo">Topics</h1>
+      <ul class="topic-lista">
+%s
+      </ul>
+    </section>""" % "\n".join(rows)
+        head_html = head(config, title="Topics",
+                         description="Browse Fauna Report by topic — conservation, ecology, taxonomy and more.",
+                         path="/topics/")
+        write(DIST / "topics" / "index.html",
+              layout(config, head_html=head_html, body=body, active="Topics"))
+
+    # one page per tag
+    for tag, items in tag_map.items():
+        items = sorted(items, key=lambda d: d["date"] or datetime.min.replace(tzinfo=timezone.utc),
+                       reverse=True)
+        grid = "\n".join(card(p) for p in items)
+        body = """    <section class="seccao">
+      <p class="sobrancelha"><a href="/topics/">Topics</a></p>
+      <h1 class="seccao-titulo">%s</h1>
+      <p class="seccao-nota">%d article%s on this topic.</p>
+      <div class="grelha" style="margin-top:2rem">
+%s
+      </div>
+    </section>""" % (esc(tag), len(items), "" if len(items) == 1 else "s", grid)
+        head_html = head(config, title="%s — Topics" % tag.capitalize(),
+                         description="Fauna Report articles about %s." % tag,
+                         path="/topics/%s/" % slugify(tag))
+        write(DIST / "topics" / slugify(tag) / "index.html",
+              layout(config, head_html=head_html, body=body, active="Topics"))
+
+    return sorted(tag_map, key=lambda t: (-len(tag_map[t]), t.lower()))
+
+
+def build_search(config, posts):
+    """A JSON index + a tiny vanilla-JS search page (no libraries, no tracking)."""
+    base = config["base_url"].rstrip("/")
+    index = [{
+        "title": p["title"],
+        "url": "/articles/%s/" % p["slug"],
+        "desc": p["description"],
+        "tags": p["tags"],
+        "date": pt_date(p["date"]),
+    } for p in posts if not p["noindex"]]
+    write(DIST / "search-index.json", json.dumps(index, ensure_ascii=False))
+
+    body = """    <section class="seccao">
+      <p class="sobrancelha">Find</p>
+      <h1 class="seccao-titulo">Search</h1>
+      <div class="busca">
+        <input type="search" id="q" placeholder="Search articles\u2026"
+               autocomplete="off" aria-label="Search articles">
+        <p class="busca-nota" id="busca-nota">Type to search %d articles.</p>
+        <ul class="busca-res" id="res"></ul>
+      </div>
+    </section>
+    <script>
+    (function () {
+      var input = document.getElementById('q');
+      var res = document.getElementById('res');
+      var note = document.getElementById('busca-nota');
+      var data = [];
+      fetch('/search-index.json').then(function (r) { return r.json(); })
+        .then(function (j) { data = j; var q = param(); if (q) { input.value = q; run(q); } })
+        .catch(function () { note.textContent = 'Search is unavailable right now.'; });
+      function param() {
+        var m = location.search.match(/[?&]q=([^&]+)/);
+        return m ? decodeURIComponent(m[1].replace(/\\+/g, ' ')) : '';
+      }
+      function esc(s) { return s.replace(/[&<>"]/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+      function run(q) {
+        q = q.trim().toLowerCase();
+        if (!q) { res.innerHTML = ''; note.textContent = 'Type to search ' + data.length + ' articles.'; return; }
+        var hits = data.filter(function (a) {
+          var hay = (a.title + ' ' + a.desc + ' ' + a.tags.join(' ')).toLowerCase();
+          return q.split(/\\s+/).every(function (w) { return hay.indexOf(w) !== -1; });
+        });
+        note.textContent = hits.length + ' result' + (hits.length === 1 ? '' : 's') + ' for \u201c' + q + '\u201d';
+        res.innerHTML = hits.map(function (a) {
+          return '<li><a href="' + a.url + '"><span class="busca-titulo">' + esc(a.title) +
+                 '</span><span class="busca-desc">' + esc(a.desc) + '</span></a></li>';
+        }).join('');
+      }
+      input.addEventListener('input', function () { run(input.value); });
+    })();
+    </script>""" % len(index)
+    head_html = head(config, title="Search",
+                     description="Search Fauna Report articles.",
+                     path="/search/", noindex=True)
+    write(DIST / "search" / "index.html",
+          layout(config, head_html=head_html, body=body, active="Search"))
+
+
 def build_page(config, page):
     body = """    <article class="artigo">
       <header class="artigo-cabeca">
@@ -847,19 +987,24 @@ def build_404(config):
 # SEO artefacts
 # --------------------------------------------------------------------------
 
-def build_sitemap(config, posts, pages):
+def build_sitemap(config, posts, pages, topics=None):
     base = config["base_url"].rstrip("/")
-    entries = [(base + "/", datetime.now(timezone.utc), "1.0", "daily")]
+    now = datetime.now(timezone.utc)
+    entries = [(base + "/", now, "1.0", "daily")]
     for p in posts:
         if p["noindex"]:
             continue
         entries.append(("%s/articles/%s/" % (base, p["slug"]),
-                        p["updated"] or p["date"] or datetime.now(timezone.utc), "0.8", "monthly"))
+                        p["updated"] or p["date"] or now, "0.8", "monthly"))
+    if topics:
+        entries.append(("%s/topics/" % base, now, "0.5", "weekly"))
+        for tag in topics:
+            entries.append(("%s/topics/%s/" % (base, slugify(tag)), now, "0.5", "weekly"))
     for p in pages:
         if p["noindex"]:
             continue
         entries.append(("%s/%s/" % (base, p["slug"]),
-                        p["updated"] or datetime.now(timezone.utc), "0.4", "yearly"))
+                        p["updated"] or now, "0.4", "yearly"))
 
     rows = "\n".join(
         "  <url>\n    <loc>%s</loc>\n    <lastmod>%s</lastmod>\n"
@@ -1032,16 +1177,19 @@ def main():
     build_og_image(config)
 
     print("Generating pages")
+    topic_tags = qualifying_topics(posts)
     build_home(config, posts, radar)
     for p in posts:
-        build_post(config, p, posts)
+        build_post(config, p, posts, topic_tags)
     for p in pages:
         build_page(config, p)
+    topics = build_topics(config, posts, topic_tags)
+    build_search(config, posts)
     build_radar(config, radar)
     build_404(config)
 
     print("Generating SEO artefacts")
-    build_sitemap(config, posts, pages)
+    build_sitemap(config, posts, pages, topics)
     build_robots(config)
     build_feed(config, posts)
 
