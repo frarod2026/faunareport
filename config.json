@@ -47,6 +47,26 @@
       "site": "https://phys.org"
     },
     {
+      "name": "The Guardian — Science",
+      "url": "https://www.theguardian.com/science/rss",
+      "site": "https://www.theguardian.com/science"
+    },
+    {
+      "name": "ScienceDaily — Earth & Climate",
+      "url": "https://www.sciencedaily.com/rss/earth_climate.xml",
+      "site": "https://www.sciencedaily.com"
+    },
+    {
+      "name": "Smithsonian — Science & Nature",
+      "url": "https://www.smithsonianmag.com/rss/science-nature/",
+      "site": "https://www.smithsonianmag.com/science-nature/"
+    },
+    {
+      "name": "Ars Technica — Science",
+      "url": "https://feeds.arstechnica.com/arstechnica/science",
+      "site": "https://arstechnica.com/science/"
+    },
+    {
       "name": "EDGE of Existence",
       "url": "https://www.edgeofexistence.org/blog/feed/",
       "site": "https://www.edgeofexistence.org/blog"
