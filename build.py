@@ -37,7 +37,8 @@ CONTENT = ROOT / "content"
 STATIC = ROOT / "static"
 CACHE = ROOT / ".cache" / "feeds.json"
 
-USER_AGENT = "EveryAnimal/1.0 (+https://everyanimal.net; feed aggregator)"
+USER_AGENT = ("Mozilla/5.0 (compatible; FaunaReportBot/1.0; "
+              "+https://faunareport.org; feed aggregator)")
 FEED_TIMEOUT = 12
 OG_EXT = "png"  # set by build_og_image(); referenced by head()
 
