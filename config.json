@@ -37,21 +37,6 @@
       "site": "https://www.sciencedaily.com"
     },
     {
-      "name": "ScienceDaily — Wild Animals",
-      "url": "https://www.sciencedaily.com/rss/plants_animals/wild_animals.xml",
-      "site": "https://www.sciencedaily.com"
-    },
-    {
-      "name": "EDGE of Existence (ZSL)",
-      "url": "https://www.edgeofexistence.org/blog/feed/",
-      "site": "https://www.edgeofexistence.org/blog/"
-    },
-    {
-      "name": "Audubon",
-      "url": "https://www.audubon.org/rss.xml",
-      "site": "https://www.audubon.org/news"
-    },
-    {
       "name": "Phys.org — Plants & Animals",
       "url": "https://phys.org/rss-feed/biology-news/plants-animals/",
       "site": "https://phys.org"
@@ -60,6 +45,16 @@
       "name": "Phys.org — Ecology",
       "url": "https://phys.org/rss-feed/biology-news/ecology/",
       "site": "https://phys.org"
+    },
+    {
+      "name": "EDGE of Existence",
+      "url": "https://www.edgeofexistence.org/blog/feed/",
+      "site": "https://www.edgeofexistence.org/blog"
+    },
+    {
+      "name": "WWF-Canada",
+      "url": "https://wwf.ca/feed/",
+      "site": "https://wwf.ca/news-stories"
     }
   ]
 }
