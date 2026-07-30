@@ -274,3 +274,35 @@ a { color: var(--link); text-underline-offset: .18em; }
 .busca-res a:hover .busca-titulo { color: var(--accent); }
 .busca-desc { display: block; color: var(--muted); font-size: .95rem; margin-top: .3rem; }
 .etiquetas li.plain { color: var(--muted); }
+
+/* ---------- Fase 4: reading polish ---------- */
+.progresso { position: fixed; top: 0; left: 0; height: 3px; width: 100%;
+  background: var(--accent); transform: scaleX(0); transform-origin: 0 50%;
+  z-index: 50; transition: transform .05s linear; }
+
+/* drop cap on the article's opening paragraph */
+.prosa > p:first-child::first-letter { float: left; font-family: var(--display);
+  font-weight: 700; font-size: 3.5em; line-height: .78; padding: .02em .12em 0 0;
+  color: var(--accent); }
+
+/* pull-quote styling for blockquotes */
+.prosa blockquote { margin: 2.2rem 0; padding: .1rem 0 .1rem 1.5rem;
+  border-left: 3px solid var(--accent); font-family: var(--display); font-weight: 500;
+  font-size: 1.35rem; line-height: 1.4; letter-spacing: -.01em; color: var(--ink); }
+.prosa blockquote p { margin: 0; }
+
+/* scroll-spy table of contents */
+.indice a { text-decoration: none; color: var(--muted); }
+.indice a:hover { color: var(--ink); }
+.indice a.ativo { color: var(--accent); font-weight: 600; }
+
+/* share buttons */
+.partilha { max-width: var(--measure); margin: 2.5rem 0 0; padding-top: 1.5rem;
+  border-top: 1px solid var(--line); display: flex; flex-wrap: wrap;
+  align-items: center; gap: .6rem; }
+.partilha-rot { font-family: var(--mono); font-size: .72rem; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--muted); margin-right: .3rem; }
+.partilha-btn { font-family: var(--mono); font-size: .8rem; color: var(--ink);
+  background: var(--bg-2); border: 1px solid var(--line); border-radius: 7px;
+  padding: .4rem .7rem; text-decoration: none; cursor: pointer; }
+.partilha-btn:hover { border-color: var(--accent); color: var(--accent); }

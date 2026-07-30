@@ -25,6 +25,7 @@ import shutil
 import sys
 import unicodedata
 import urllib.error
+import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
@@ -766,7 +767,8 @@ def build_post(config, post, posts, topic_tags=frozenset()):
         %s
       </figure>""" % (media_html(post, "banner-media", eager=True), credit))
 
-    body = """    <article class="artigo">
+    body = """    <div class="progresso" id="progresso" aria-hidden="true"></div>
+    <article class="artigo">
       <header class="artigo-cabeca">
         <p class="sobrancelha"><a href="/">%(site)s</a> / Article</p>
         <h1>%(title)s</h1>
@@ -783,15 +785,63 @@ def build_post(config, post, posts, topic_tags=frozenset()):
       <div class="prosa">
 %(html)s
       </div>
+      <footer class="partilha" aria-label="Share this article">
+        <span class="partilha-rot">Share</span>
+        <a class="partilha-btn" href="https://twitter.com/intent/tweet?url=%(u)s&amp;text=%(t)s" target="_blank" rel="noopener">X</a>
+        <a class="partilha-btn" href="https://www.facebook.com/sharer/sharer.php?u=%(u)s" target="_blank" rel="noopener">Facebook</a>
+        <a class="partilha-btn" href="https://www.linkedin.com/sharing/share-offsite/?url=%(u)s" target="_blank" rel="noopener">LinkedIn</a>
+        <a class="partilha-btn" href="mailto:?subject=%(t)s&amp;body=%(u)s">Email</a>
+        <button class="partilha-btn" id="copiar" type="button">Copy link</button>
+      </footer>
     </article>
 %(rel)s
-    <script type="application/ld+json">%(crumbs)s</script>""" % {
+    <script type="application/ld+json">%(crumbs)s</script>
+    <script>
+    (function () {
+      var bar = document.getElementById('progresso');
+      var de = document.documentElement;
+      function prog() {
+        var m = de.scrollHeight - de.clientHeight;
+        var p = m > 0 ? de.scrollTop / m : 0;
+        bar.style.transform = 'scaleX(' + Math.min(1, Math.max(0, p)) + ')';
+      }
+      document.addEventListener('scroll', prog, { passive: true });
+      window.addEventListener('resize', prog); prog();
+
+      var links = document.querySelectorAll('.indice a');
+      if (links.length) {
+        var secs = [];
+        links.forEach(function (a) {
+          var el = document.getElementById(a.getAttribute('href').slice(1));
+          if (el) secs.push([a, el]);
+        });
+        function spy() {
+          var y = window.scrollY + 140, cur = null;
+          secs.forEach(function (pair) { if (pair[1].offsetTop <= y) cur = pair[0]; });
+          links.forEach(function (a) { a.classList.toggle('ativo', a === cur); });
+        }
+        document.addEventListener('scroll', spy, { passive: true }); spy();
+      }
+
+      var cp = document.getElementById('copiar');
+      if (cp && navigator.clipboard) {
+        cp.addEventListener('click', function () {
+          navigator.clipboard.writeText(location.href).then(function () {
+            var o = cp.textContent; cp.textContent = 'Copied!';
+            setTimeout(function () { cp.textContent = o; }, 1500);
+          });
+        });
+      } else if (cp) { cp.style.display = 'none'; }
+    })();
+    </script>""" % {
         "site": esc(config["site_name"]), "title": esc(post["title"]),
         "desc": esc(post["description"]),
         "iso": post["date"].isoformat() if post["date"] else "",
         "data": pt_date(post["date"]), "rt": post["read_time"],
         "tags": tags, "banner": banner, "toc": toc, "html": post["html"], "rel": rel,
         "crumbs": json.dumps(crumbs, ensure_ascii=False),
+        "u": urllib.parse.quote(url, safe=""),
+        "t": urllib.parse.quote(post["title"], safe=""),
     }
 
     base_url = config["base_url"].rstrip("/")
