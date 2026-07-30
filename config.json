@@ -42,14 +42,14 @@
       "site": "https://www.sciencedaily.com"
     },
     {
-      "name": "ScienceDaily — Endangered Animals",
-      "url": "https://www.sciencedaily.com/rss/plants_animals/endangered_animals.xml",
-      "site": "https://www.sciencedaily.com"
+      "name": "EDGE of Existence (ZSL)",
+      "url": "https://www.edgeofexistence.org/blog/feed/",
+      "site": "https://www.edgeofexistence.org/blog/"
     },
     {
-      "name": "ScienceDaily — Marine Biology",
-      "url": "https://www.sciencedaily.com/rss/plants_animals/marine_biology.xml",
-      "site": "https://www.sciencedaily.com"
+      "name": "Audubon",
+      "url": "https://www.audubon.org/rss.xml",
+      "site": "https://www.audubon.org/news"
     },
     {
       "name": "Phys.org — Plants & Animals",
