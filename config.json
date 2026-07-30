@@ -8,7 +8,7 @@
   "author": "Fauna Report",
   "twitter": "",
   "posts_per_page": 10,
-  "radar_max_items": 24,
+  "radar_max_items": 40,
   "radar_excerpt_chars": 180,
   "feeds": [
     {
@@ -22,6 +22,16 @@
       "site": "https://www.theguardian.com/environment/wildlife"
     },
     {
+      "name": "The Guardian — Environment",
+      "url": "https://www.theguardian.com/environment/rss",
+      "site": "https://www.theguardian.com/environment"
+    },
+    {
+      "name": "BBC — Science & Environment",
+      "url": "https://feeds.bbci.co.uk/news/science_and_environment/rss.xml",
+      "site": "https://www.bbc.com/news/science_and_environment"
+    },
+    {
       "name": "ScienceDaily — Plants & Animals",
       "url": "https://www.sciencedaily.com/rss/plants_animals.xml",
       "site": "https://www.sciencedaily.com"
@@ -32,8 +42,23 @@
       "site": "https://www.sciencedaily.com"
     },
     {
+      "name": "ScienceDaily — Endangered Animals",
+      "url": "https://www.sciencedaily.com/rss/plants_animals/endangered_animals.xml",
+      "site": "https://www.sciencedaily.com"
+    },
+    {
+      "name": "ScienceDaily — Marine Biology",
+      "url": "https://www.sciencedaily.com/rss/plants_animals/marine_biology.xml",
+      "site": "https://www.sciencedaily.com"
+    },
+    {
       "name": "Phys.org — Plants & Animals",
       "url": "https://phys.org/rss-feed/biology-news/plants-animals/",
+      "site": "https://phys.org"
+    },
+    {
+      "name": "Phys.org — Ecology",
+      "url": "https://phys.org/rss-feed/biology-news/ecology/",
       "site": "https://phys.org"
     }
   ]
