@@ -1,4 +1,3 @@
-[about.md](https://github.com/user-attachments/files/30622732/about.md)
 ---
 title: Sobre
 description: O que é o Fauna Report e como funciona.
