@@ -43,6 +43,114 @@ USER_AGENT = ("Mozilla/5.0 (compatible; FaunaReportBot/1.0; "
 FEED_TIMEOUT = 12
 OG_EXT = "png"  # set by build_og_image(); referenced by head()
 
+# --------------------------------------------------------------------------
+# languages (English lives at the root; Portuguese under /pt/)
+# --------------------------------------------------------------------------
+
+LANGUAGES = [
+    {"code": "en", "htmllang": "en", "prefix": "", "label": "EN",
+     "posts": "posts", "pages": "pages", "default": True},
+    {"code": "pt", "htmllang": "pt-BR", "prefix": "/pt", "label": "PT",
+     "posts": "pt/posts", "pages": "pt/pages"},
+]
+
+STRINGS = {
+    "en": {
+        "nav_home": "Home", "nav_topics": "Topics", "nav_radar": "Radar",
+        "nav_search": "Search", "nav_about": "About",
+        "skip": "Skip to content",
+        "latest": "Latest", "written_here": "Written here", "read_next": "Read next",
+        "in_this_article": "In this article", "article": "Article", "page": "Page",
+        "min_read": "%d min read", "see_full_radar": "See the full radar",
+        "radar_home_note": "Published elsewhere. Links open on the original site.",
+        "radar_title": "Radar",
+        "radar_desc": "A selection of articles published on other sites, linking to the source.",
+        "radar_page_note": ("A selection of what came out elsewhere. Title, a short excerpt "
+                            "and a link to the source — the full text stays where it was "
+                            "published. %d items, refreshed on every build."),
+        "sources": "Sources: %s.",
+        "browse": "Browse", "topics_title": "Topics",
+        "topics_desc": "Browse Fauna Report by topic — conservation, ecology, taxonomy and more.",
+        "articles_on_topic": "%d %s on this topic.",
+        "article_one": "article", "article_many": "articles",
+        "find": "Find", "search_title": "Search",
+        "search_desc": "Search Fauna Report articles.",
+        "search_placeholder": "Search articles\u2026",
+        "search_type": "Type to search %d articles.",
+        "search_unavailable": "Search is unavailable right now.",
+        "result_one": "result", "result_many": "results",
+        "share": "Share", "copy_link": "Copy link", "copied": "Copied!",
+        "footer_note": ("The articles here are written for this site. The Radar links to "
+                        "other people\u2019s work, hosted by them."),
+        "e404_eyebrow": "Error 404", "e404_title": "This page does not exist",
+        "e404_body": ("The address may have changed, or never existed. Start from the "
+                      "<a href=\"%s/\">home page</a> or check the <a href=\"%s/radar/\">Radar</a>."),
+        "not_found_title": "Page not found",
+        "not_found_desc": "The page you asked for does not exist.",
+    },
+    "pt": {
+        "nav_home": "Início", "nav_topics": "Temas", "nav_radar": "Radar",
+        "nav_search": "Buscar", "nav_about": "Sobre",
+        "skip": "Pular para o conteúdo",
+        "latest": "Mais recente", "written_here": "Escrito aqui", "read_next": "Leia a seguir",
+        "in_this_article": "Neste artigo", "article": "Artigo", "page": "Página",
+        "min_read": "%d min de leitura", "see_full_radar": "Ver o radar completo",
+        "radar_home_note": "Publicado em outros sites. Os links abrem na fonte original.",
+        "radar_title": "Radar",
+        "radar_desc": "Uma seleção de artigos publicados em outros sites, com link para a fonte.",
+        "radar_page_note": ("Uma seleção do que saiu em outros lugares. Título, um trecho curto "
+                            "e um link para a fonte — o texto completo fica onde foi publicado. "
+                            "%d itens, atualizados a cada publicação."),
+        "sources": "Fontes: %s.",
+        "browse": "Explorar", "topics_title": "Temas",
+        "topics_desc": "Explore o Fauna Report por tema — conservação, ecologia, taxonomia e mais.",
+        "articles_on_topic": "%d %s sobre este tema.",
+        "article_one": "artigo", "article_many": "artigos",
+        "find": "Buscar", "search_title": "Buscar",
+        "search_desc": "Busque nos artigos do Fauna Report.",
+        "search_placeholder": "Buscar artigos\u2026",
+        "search_type": "Digite para buscar em %d artigos.",
+        "search_unavailable": "A busca está indisponível no momento.",
+        "result_one": "resultado", "result_many": "resultados",
+        "share": "Compartilhar", "copy_link": "Copiar link", "copied": "Copiado!",
+        "footer_note": ("Os artigos aqui são escritos para este site. O Radar traz links para "
+                        "o trabalho de outros, hospedado por eles."),
+        "e404_eyebrow": "Erro 404", "e404_title": "Esta página não existe",
+        "e404_body": ("O endereço pode ter mudado, ou nunca existiu. Comece pela "
+                      "<a href=\"%s/\">página inicial</a> ou veja o <a href=\"%s/radar/\">Radar</a>."),
+        "not_found_title": "Página não encontrada",
+        "not_found_desc": "A página que você pediu não existe.",
+    },
+}
+
+# current language context, set by main() before each language pass
+L = {"code": "en", "htmllang": "en", "prefix": "", "label": "EN",
+     "strings": STRINGS["en"]}
+PT_SLUGS = set()   # article slugs that have a Portuguese translation
+
+
+def T(key, *args):
+    s = L["strings"].get(key)
+    if s is None:
+        s = STRINGS["en"].get(key, key)
+    return (s % args) if args else s
+
+
+def urlp(path):
+    """Prefix a site-relative path with the current language dir (/pt/...)."""
+    if not L["prefix"]:
+        return path
+    if path == "/":
+        return L["prefix"] + "/"
+    return L["prefix"] + path
+
+
+def outp(*parts):
+    """Output path under the current language directory."""
+    if L["prefix"]:
+        return DIST.joinpath(L["prefix"].strip("/"), *parts)
+    return DIST.joinpath(*parts)
+
 
 # --------------------------------------------------------------------------
 # helpers
@@ -437,9 +545,10 @@ def media_html(post, css_class, *, eager=False):
 # --------------------------------------------------------------------------
 
 def head(config, *, title, description, path, page_type="website",
-         published=None, modified=None, noindex=False, jsonld=None, og_image=None):
+         published=None, modified=None, noindex=False, jsonld=None, og_image=None,
+         alt_path=None):
     base = config["base_url"].rstrip("/")
-    url = base + path
+    url = base + urlp(path)
     full_title = title if title == config["site_name"] else "%s — %s" % (title, config["site_name"])
     robots = "noindex, follow" if noindex else "index, follow, max-image-preview:large, max-snippet:-1"
     share_image = og_image or "%s/og.%s" % (base, OG_EXT)
@@ -487,13 +596,34 @@ def head(config, *, title, description, path, page_type="website",
     if jsonld:
         tags.append('<script type="application/ld+json">%s</script>'
                     % json.dumps(jsonld, ensure_ascii=False))
+    if alt_path is not None:
+        for lang in LANGUAGES:
+            u = base + (lang["prefix"] + "/" if alt_path == "/" else lang["prefix"] + alt_path)
+            tags.append('<link rel="alternate" hreflang="%s" href="%s">' % (lang["htmllang"], esc(u)))
+        default_lang = next(x for x in LANGUAGES if x.get("default"))
+        du = base + (default_lang["prefix"] + "/" if alt_path == "/" else default_lang["prefix"] + alt_path)
+        tags.append('<link rel="alternate" hreflang="x-default" href="%s">' % esc(du))
     return "\n  ".join(tags)
 
 
-def layout(config, *, head_html, body, active="", theme="dark"):
+def layout(config, *, head_html, body, active="", theme="dark", alt_path=None, has_alt=True):
     def nav(href, label):
         cur = ' aria-current="page"' if active == label else ""
-        return '<a href="%s"%s>%s</a>' % (href, cur, label)
+        return '<a href="%s"%s>%s</a>' % (urlp(href), cur, label)
+
+    def lang_switch():
+        parts = []
+        for lang in LANGUAGES:
+            if alt_path is not None and (has_alt or lang.get("default") or lang["code"] == L["code"]):
+                target = lang["prefix"] + "/" if alt_path == "/" else lang["prefix"] + alt_path
+            else:
+                target = lang["prefix"] + "/"
+            if lang["code"] == L["code"]:
+                parts.append('<span class="lang-atual" aria-current="true">%s</span>' % lang["label"])
+            else:
+                parts.append('<a href="%s" hreflang="%s">%s</a>' % (
+                    esc(target), lang["htmllang"], lang["label"]))
+        return '<div class="linguas" aria-label="Language">%s</div>' % "".join(parts)
 
     return """<!doctype html>
 <html lang="%(lang)s" class="theme-%(theme)s">
@@ -501,10 +631,10 @@ def layout(config, *, head_html, body, active="", theme="dark"):
   %(head)s
 </head>
 <body>
-  <a class="skip" href="#principal">Skip to content</a>
+  <a class="skip" href="#principal">%(skip)s</a>
   <header class="topo">
     <div class="linha">
-      <a class="marca" href="/">
+      <a class="marca" href="%(homehref)s">
         <svg class="marca-icone" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
           <circle cx="6.2" cy="9.4" r="2.5"/>
           <circle cx="10.6" cy="6.4" r="2.7"/>
@@ -519,6 +649,7 @@ def layout(config, *, head_html, body, active="", theme="dark"):
       </a>
       <nav aria-label="Main">
         %(nav)s
+        %(langs)s
       </nav>
     </div>
   </header>
@@ -531,22 +662,31 @@ def layout(config, *, head_html, body, active="", theme="dark"):
       <p class="mudo">
         <a href="/feed.xml">RSS</a> ·
         <a href="/sitemap.xml">Sitemap</a> ·
-        <a href="/about/">About</a>
+        <a href="%(abouthref)s">%(about)s</a>
       </p>
-      <p class="mudo">The articles here are written for this site. The Radar links to other people&#39;s work, hosted by them.</p>
+      <p class="mudo">%(footer)s</p>
     </div>
   </footer>
 </body>
 </html>
 """ % {
-        "lang": config.get("lang", "pt-PT"),
+        "lang": L["htmllang"],
         "theme": theme,
         "head": head_html,
+        "skip": esc(T("skip")),
+        "homehref": urlp("/"),
+        "abouthref": urlp("/about/"),
         "site": esc(config["site_name"]),
         "tagline": esc(config["tagline"]),
-        "nav": "\n        ".join([nav("/", "Home"), nav("/topics/", "Topics"),
-                                  nav("/radar/", "Radar"), nav("/search/", "Search"),
-                                  nav("/about/", "About")]),
+        "nav": "\n        ".join(
+            [nav("/", T("nav_home")), nav("/topics/", T("nav_topics")),
+             nav("/radar/", T("nav_radar")), nav("/search/", T("nav_search")),
+             nav("/about/", T("nav_about"))]
+            if L["code"] == "en" else
+            [nav("/", T("nav_home")), nav("/about/", T("nav_about"))]),
+        "langs": lang_switch(),
+        "about": esc(T("nav_about")),
+        "footer": esc(T("footer_note")),
         "body": body,
     }
 
@@ -555,7 +695,7 @@ def card(post):
     tag = esc(post["tags"][0]) if post["tags"] else ""
     tag_html = '<span class="cartao-tag">%s</span>' % tag if tag else ""
     return """      <article class="cartao">
-        <a class="cartao-liga" href="/articles/%(slug)s/">
+        <a class="cartao-liga" href="%(href)s">
           %(media)s
           <div class="cartao-corpo">
             %(tag)s
@@ -563,18 +703,18 @@ def card(post):
             <p class="meta">
               <time datetime="%(iso)s">%(data)s</time>
               <span aria-hidden="true">·</span>
-              <span>%(rt)d min read</span>
+              <span>%(rt)s</span>
             </p>
           </div>
         </a>
       </article>""" % {
-        "slug": esc(post["slug"]),
+        "href": urlp("/articles/%s/" % post["slug"]),
         "title": esc(post["title"]),
         "media": media_html(post, "cartao-media"),
         "tag": tag_html,
         "iso": post["date"].isoformat() if post["date"] else "",
         "data": pt_date(post["date"]),
-        "rt": post["read_time"],
+        "rt": T("min_read", post["read_time"]),
     }
 
 
@@ -616,14 +756,15 @@ def write(path, content):
 
 def build_home(config, posts, radar):
     base = config["base_url"].rstrip("/")
+    home_url = base + urlp("/")
     jsonld = {
         "@context": "https://schema.org",
         "@graph": [
-            {"@type": "WebSite", "@id": base + "/#website", "url": base + "/",
+            {"@type": "WebSite", "@id": home_url + "#website", "url": home_url,
              "name": config["site_name"], "description": config["description"],
-             "inLanguage": config.get("lang", "pt-PT")},
-            {"@type": "Organization", "@id": base + "/#org", "name": config["site_name"],
-             "url": base + "/"},
+             "inLanguage": L["htmllang"]},
+            {"@type": "Organization", "@id": home_url + "#org", "name": config["site_name"],
+             "url": home_url},
         ],
     }
     destaque = posts[0] if posts else None
@@ -633,25 +774,25 @@ def build_home(config, posts, radar):
     hero = ""
     if destaque:
         hero = """    <section class="hero">
-      <a class="hero-liga" href="/articles/%(slug)s/">
+      <a class="hero-liga" href="%(href)s">
         %(media)s
         <div class="hero-texto">
-          <p class="sobrancelha">Latest</p>
+          <p class="sobrancelha">%(latest)s</p>
           <h1>%(title)s</h1>
           <p class="chamada">%(desc)s</p>
           <p class="meta">
             <time datetime="%(iso)s">%(data)s</time>
             <span aria-hidden="true">·</span>
-            <span>%(rt)d min read</span>
+            <span>%(rt)s</span>
           </p>
         </div>
       </a>
     </section>""" % {
-            "slug": esc(destaque["slug"]), "title": esc(destaque["title"]),
-            "desc": esc(destaque["description"]),
+            "href": urlp("/articles/%s/" % destaque["slug"]), "title": esc(destaque["title"]),
+            "desc": esc(destaque["description"]), "latest": esc(T("latest")),
             "media": media_html(destaque, "hero-media", eager=True),
             "iso": destaque["date"].isoformat() if destaque["date"] else "",
-            "data": pt_date(destaque["date"]), "rt": destaque["read_time"],
+            "data": pt_date(destaque["date"]), "rt": T("min_read", destaque["read_time"]),
         }
 
     grelha = ""
@@ -664,30 +805,38 @@ def build_home(config, posts, radar):
             blocos.append('      <div class="grelha">\n%s\n      </div>'
                           % "\n".join(card(p) for p in resto))
         grelha = """    <section class="seccao" aria-labelledby="more-articles">
-      <h2 id="more-articles" class="seccao-titulo">Written here</h2>
+      <h2 id="more-articles" class="seccao-titulo">%s</h2>
 %s
-    </section>""" % "\n".join(blocos)
+    </section>""" % (esc(T("written_here")), "\n".join(blocos))
 
-    radar_bloco = """    <section class="seccao radar" aria-labelledby="radar-titulo">
+    radar_bloco = ""
+    if L["code"] == "en":  # the Radar is English-only for now
+        radar_bloco = """    <section class="seccao radar" aria-labelledby="radar-titulo">
       <div class="seccao-cabeca">
-        <h2 id="radar-titulo" class="seccao-titulo">Radar</h2>
-        <p class="seccao-nota">Published elsewhere. Links open on the original site.</p>
+        <h2 id="radar-titulo" class="seccao-titulo">%(titulo)s</h2>
+        <p class="seccao-nota">%(nota)s</p>
       </div>
       <ul class="radar-lista">
-%s
+%(itens)s
       </ul>
-      <p class="mais"><a href="/radar/">See the full radar</a></p>
-    </section>""" % "\n".join(radar_row(i) for i in radar[:6])
+      <p class="mais"><a href="%(href)s">%(ver)s</a></p>
+    </section>""" % {
+            "titulo": esc(T("radar_title")), "nota": esc(T("radar_home_note")),
+            "itens": "\n".join(radar_row(i) for i in radar[:6]),
+            "href": urlp("/radar/"), "ver": esc(T("see_full_radar")),
+        }
 
     body = "\n".join(x for x in [hero, grelha, radar_bloco] if x)
     head_html = head(config, title=config["site_name"], description=config["description"],
-                     path="/", jsonld=jsonld)
-    write(DIST / "index.html", layout(config, head_html=head_html, body=body, active="Home"))
+                     path="/", jsonld=jsonld, alt_path="/")
+    write(outp("index.html"),
+          layout(config, head_html=head_html, body=body, active=T("nav_home"),
+                 alt_path="/", has_alt=True))
 
 
 def build_post(config, post, posts, topic_tags=frozenset()):
     base = config["base_url"].rstrip("/")
-    url = "%s/articles/%s/" % (base, post["slug"])
+    url = base + urlp("/articles/%s/" % post["slug"])
     jsonld = {
         "@context": "https://schema.org",
         "@type": "BlogPosting",
@@ -695,7 +844,7 @@ def build_post(config, post, posts, topic_tags=frozenset()):
         "description": post["description"],
         "url": url,
         "mainEntityOfPage": {"@type": "WebPage", "@id": url},
-        "inLanguage": config.get("lang", "pt-PT"),
+        "inLanguage": L["htmllang"],
         "author": {"@type": "Person" if post.get("author") else "Organization",
                    "name": post.get("author") or config["author"]},
         "publisher": {"@type": "Organization", "name": config["site_name"], "url": base + "/"},
@@ -713,21 +862,23 @@ def build_post(config, post, posts, topic_tags=frozenset()):
     crumbs = {
         "@context": "https://schema.org", "@type": "BreadcrumbList",
         "itemListElement": [
-            {"@type": "ListItem", "position": 1, "name": "Home", "item": base + "/"},
-            {"@type": "ListItem", "position": 2, "name": "Articles", "item": base + "/#more-articles"},
+            {"@type": "ListItem", "position": 1, "name": T("nav_home"), "item": base + urlp("/")},
+            {"@type": "ListItem", "position": 2, "name": T("written_here"),
+             "item": base + urlp("/#more-articles")},
             {"@type": "ListItem", "position": 3, "name": post["title"], "item": url},
         ],
     }
 
     toc = ""
     if len(post["toc"]) >= 3:
-        toc = """      <nav class="indice" aria-label="In this article">
-        <p class="indice-titulo">In this article</p>
+        toc = """      <nav class="indice" aria-label="%(rot)s">
+        <p class="indice-titulo">%(rot)s</p>
         <ol>
-%s
+%(itens)s
         </ol>
-      </nav>""" % "\n".join('          <li><a href="#%s">%s</a></li>' % (esc(h), esc(t))
-                            for h, t in post["toc"])
+      </nav>""" % {"rot": esc(T("in_this_article")),
+                   "itens": "\n".join('          <li><a href="#%s">%s</a></li>' % (esc(h), esc(t))
+                                      for h, t in post["toc"])}
 
     # related by shared tags, then filled with most recent
     my_tags = set(post["tags"])
@@ -743,17 +894,17 @@ def build_post(config, post, posts, topic_tags=frozenset()):
     rel = ""
     if relacionados:
         rel = """    <section class="seccao" aria-labelledby="read-next">
-      <h2 id="read-next" class="seccao-titulo">Read next</h2>
+      <h2 id="read-next" class="seccao-titulo">%s</h2>
       <div class="grelha">
 %s
       </div>
-    </section>""" % "\n".join(card(p) for p in relacionados)
+    </section>""" % (esc(T("read_next")), "\n".join(card(p) for p in relacionados))
 
     tags = ""
     if post["tags"]:
         def tag_li(t):
             if t in topic_tags:
-                return '<li><a href="/topics/%s/">%s</a></li>' % (slugify(t), esc(t))
+                return '<li><a href="%s">%s</a></li>' % (urlp("/topics/%s/" % slugify(t)), esc(t))
             return '<li class="plain">%s</li>' % esc(t)
         tags = '<ul class="etiquetas">%s</ul>' % "".join(tag_li(t) for t in post["tags"])
 
@@ -770,13 +921,13 @@ def build_post(config, post, posts, topic_tags=frozenset()):
     body = """    <div class="progresso" id="progresso" aria-hidden="true"></div>
     <article class="artigo">
       <header class="artigo-cabeca">
-        <p class="sobrancelha"><a href="/">%(site)s</a> / Article</p>
+        <p class="sobrancelha"><a href="%(homehref)s">%(site)s</a> / %(articleword)s</p>
         <h1>%(title)s</h1>
         <p class="chamada">%(desc)s</p>
         <p class="meta">
           <time datetime="%(iso)s">%(data)s</time>
           <span aria-hidden="true">·</span>
-          <span>%(rt)d min read</span>
+          <span>%(rt)s</span>
         </p>
         %(tags)s
       </header>
@@ -786,12 +937,12 @@ def build_post(config, post, posts, topic_tags=frozenset()):
 %(html)s
       </div>
       <footer class="partilha" aria-label="Share this article">
-        <span class="partilha-rot">Share</span>
+        <span class="partilha-rot">%(shareword)s</span>
         <a class="partilha-btn" href="https://twitter.com/intent/tweet?url=%(u)s&amp;text=%(t)s" target="_blank" rel="noopener">X</a>
         <a class="partilha-btn" href="https://www.facebook.com/sharer/sharer.php?u=%(u)s" target="_blank" rel="noopener">Facebook</a>
         <a class="partilha-btn" href="https://www.linkedin.com/sharing/share-offsite/?url=%(u)s" target="_blank" rel="noopener">LinkedIn</a>
         <a class="partilha-btn" href="mailto:?subject=%(t)s&amp;body=%(u)s">Email</a>
-        <button class="partilha-btn" id="copiar" type="button">Copy link</button>
+        <button class="partilha-btn" id="copiar" type="button">%(copyword)s</button>
       </footer>
     </article>
 %(rel)s
@@ -827,7 +978,7 @@ def build_post(config, post, posts, topic_tags=frozenset()):
       if (cp && navigator.clipboard) {
         cp.addEventListener('click', function () {
           navigator.clipboard.writeText(location.href).then(function () {
-            var o = cp.textContent; cp.textContent = 'Copied!';
+            var o = cp.textContent; cp.textContent = '%(copiedword)s';
             setTimeout(function () { cp.textContent = o; }, 1500);
           });
         });
@@ -836,8 +987,11 @@ def build_post(config, post, posts, topic_tags=frozenset()):
     </script>""" % {
         "site": esc(config["site_name"]), "title": esc(post["title"]),
         "desc": esc(post["description"]),
+        "homehref": urlp("/"), "articleword": esc(T("article")),
+        "shareword": esc(T("share")), "copyword": esc(T("copy_link")),
+        "copiedword": T("copied"),
         "iso": post["date"].isoformat() if post["date"] else "",
-        "data": pt_date(post["date"]), "rt": post["read_time"],
+        "data": pt_date(post["date"]), "rt": T("min_read", post["read_time"]),
         "tags": tags, "banner": banner, "toc": toc, "html": post["html"], "rel": rel,
         "crumbs": json.dumps(crumbs, ensure_ascii=False),
         "u": urllib.parse.quote(url, safe=""),
@@ -846,12 +1000,16 @@ def build_post(config, post, posts, topic_tags=frozenset()):
 
     base_url = config["base_url"].rstrip("/")
     art_og = "%s/images/%s" % (base_url, post["image"]) if has_photo(post) else None
+    alt = "/articles/%s/" % post["slug"]
+    has_alt = True if L["code"] != "en" else (post["slug"] in PT_SLUGS)
     head_html = head(config, title=post["title"], description=post["description"],
-                     path="/articles/%s/" % post["slug"], page_type="article",
+                     path=alt, page_type="article",
                      published=post["date"], modified=post["updated"],
-                     noindex=post["noindex"], jsonld=jsonld, og_image=art_og)
-    write(DIST / "articles" / post["slug"] / "index.html",
-          layout(config, head_html=head_html, body=body, theme="light"))
+                     noindex=post["noindex"], jsonld=jsonld, og_image=art_og,
+                     alt_path=(alt if has_alt else None))
+    write(outp("articles", post["slug"], "index.html"),
+          layout(config, head_html=head_html, body=body, theme="light",
+                 alt_path=alt, has_alt=has_alt))
 
 
 def build_radar(config, radar):
@@ -1007,55 +1165,62 @@ def build_search(config, posts):
 def build_page(config, page):
     body = """    <article class="artigo">
       <header class="artigo-cabeca">
-        <p class="sobrancelha"><a href="/">%(site)s</a> / Page</p>
+        <p class="sobrancelha"><a href="%(homehref)s">%(site)s</a> / %(pageword)s</p>
         <h1>%(title)s</h1>
       </header>
       <div class="prosa">
 %(html)s
       </div>
     </article>""" % {"site": esc(config["site_name"]), "title": esc(page["title"]),
-                     "html": page["html"]}
+                     "homehref": urlp("/"), "pageword": esc(T("page")), "html": page["html"]}
+    alt = "/%s/" % page["slug"]
     head_html = head(config, title=page["title"], description=page["description"],
-                     path="/%s/" % page["slug"], noindex=page["noindex"])
-    write(DIST / page["slug"] / "index.html",
+                     path=alt, noindex=page["noindex"], alt_path=alt)
+    write(outp(page["slug"], "index.html"),
           layout(config, head_html=head_html, body=body, theme="light",
-                 active="About" if page["slug"] == "about" else ""))
+                 active=T("nav_about") if page["slug"] == "about" else "",
+                 alt_path=alt, has_alt=True))
 
 
 def build_404(config):
     body = """    <section class="hero">
-      <p class="sobrancelha">Error 404</p>
-      <h1>This page does not exist</h1>
-      <p class="chamada">The address may have changed, or never existed.
-      Start from the <a href="/">home page</a> or check the <a href="/radar/">Radar</a>.</p>
-    </section>"""
-    head_html = head(config, title="Page not found",
-                     description="The page you asked for does not exist.", path="/404.html", noindex=True)
-    write(DIST / "404.html", layout(config, head_html=head_html, body=body))
+      <p class="sobrancelha">%(eyebrow)s</p>
+      <h1>%(title)s</h1>
+      <p class="chamada">%(body)s</p>
+    </section>""" % {
+        "eyebrow": esc(T("e404_eyebrow")), "title": esc(T("e404_title")),
+        "body": T("e404_body") % (urlp("").rstrip("/") or "", urlp("").rstrip("/") or ""),
+    }
+    head_html = head(config, title=T("not_found_title"),
+                     description=T("not_found_desc"), path="/404.html", noindex=True)
+    write(outp("404.html"), layout(config, head_html=head_html, body=body))
 
 
 # --------------------------------------------------------------------------
 # SEO artefacts
 # --------------------------------------------------------------------------
 
-def build_sitemap(config, posts, pages, topics=None):
+def build_sitemap(config, site_langs):
     base = config["base_url"].rstrip("/")
     now = datetime.now(timezone.utc)
-    entries = [(base + "/", now, "1.0", "daily")]
-    for p in posts:
-        if p["noindex"]:
-            continue
-        entries.append(("%s/articles/%s/" % (base, p["slug"]),
-                        p["updated"] or p["date"] or now, "0.8", "monthly"))
-    if topics:
-        entries.append(("%s/topics/" % base, now, "0.5", "weekly"))
-        for tag in topics:
-            entries.append(("%s/topics/%s/" % (base, slugify(tag)), now, "0.5", "weekly"))
-    for p in pages:
-        if p["noindex"]:
-            continue
-        entries.append(("%s/%s/" % (base, p["slug"]),
-                        p["updated"] or now, "0.4", "yearly"))
+    entries = []
+    for sl in site_langs:
+        pfx = sl["prefix"]
+        entries.append((base + pfx + "/", now, "1.0", "daily"))
+        for p in sl["posts"]:
+            if p["noindex"]:
+                continue
+            entries.append(("%s%s/articles/%s/" % (base, pfx, p["slug"]),
+                            p["updated"] or p["date"] or now, "0.8", "monthly"))
+        if sl.get("topics"):
+            entries.append(("%s%s/topics/" % (base, pfx), now, "0.5", "weekly"))
+            for tag in sl["topics"]:
+                entries.append(("%s%s/topics/%s/" % (base, pfx, slugify(tag)), now, "0.5", "weekly"))
+        for p in sl["pages"]:
+            if p["noindex"]:
+                continue
+            entries.append(("%s%s/%s/" % (base, pfx, p["slug"]),
+                            p["updated"] or now, "0.4", "yearly"))
 
     rows = "\n".join(
         "  <url>\n    <loc>%s</loc>\n    <lastmod>%s</lastmod>\n"
@@ -1216,9 +1381,15 @@ def main():
         return "%d %s" % (n, word if n == 1 else word + "s")
 
     print("Reading own content")
-    posts = load_documents(CONTENT / "posts")
-    pages = load_documents(CONTENT / "pages")
-    print("  %s, %s" % (plural(len(posts), "article"), plural(len(pages), "page")))
+    content_by_lang = {}
+    for lang in LANGUAGES:
+        lp = load_documents(CONTENT / lang["posts"])
+        lg = load_documents(CONTENT / lang["pages"])
+        content_by_lang[lang["code"]] = (lp, lg)
+        print("  %s: %s, %s" % (lang["code"], plural(len(lp), "article"), plural(len(lg), "page")))
+
+    global PT_SLUGS
+    PT_SLUGS = {p["slug"] for p in content_by_lang.get("pt", ([], []))[0]}
 
     print("Collecting external feeds")
     radar = collect_radar(config, offline=args.offline)
@@ -1227,22 +1398,33 @@ def main():
     # Build the share image first so OG_EXT is set before pages reference it.
     build_og_image(config)
 
+    global L
     print("Generating pages")
-    topic_tags = qualifying_topics(posts)
-    build_home(config, posts, radar)
-    for p in posts:
-        build_post(config, p, posts, topic_tags)
-    for p in pages:
-        build_page(config, p)
-    topics = build_topics(config, posts, topic_tags)
-    build_search(config, posts)
-    build_radar(config, radar)
-    build_404(config)
+    site_langs = []
+    for lang in LANGUAGES:
+        L = {**lang, "strings": STRINGS[lang["code"]]}
+        posts, pages = content_by_lang[lang["code"]]
+        topic_tags = qualifying_topics(posts)
+        topics = None
+        build_home(config, posts, radar)
+        for p in posts:
+            build_post(config, p, posts, topic_tags)
+        for p in pages:
+            build_page(config, p)
+        if lang.get("default"):        # English-only sections for now
+            topics = build_topics(config, posts, topic_tags)
+            build_search(config, posts)
+            build_radar(config, radar)
+            build_404(config)
+        site_langs.append({"prefix": lang["prefix"], "posts": posts,
+                           "pages": pages, "topics": topics})
 
+    # SEO artefacts (shared, from the default language context)
+    L = {**LANGUAGES[0], "strings": STRINGS[LANGUAGES[0]["code"]]}
     print("Generating SEO artefacts")
-    build_sitemap(config, posts, pages, topics)
+    build_sitemap(config, site_langs)
     build_robots(config)
-    build_feed(config, posts)
+    build_feed(config, content_by_lang[LANGUAGES[0]["code"]][0])
 
     copy_static()
 

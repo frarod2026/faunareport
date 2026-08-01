@@ -306,3 +306,11 @@ a { color: var(--link); text-underline-offset: .18em; }
   background: var(--bg-2); border: 1px solid var(--line); border-radius: 7px;
   padding: .4rem .7rem; text-decoration: none; cursor: pointer; }
 .partilha-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ---------- language switcher ---------- */
+.linguas { display: inline-flex; align-items: center; gap: .1rem; margin-left: .4rem;
+  font-family: var(--mono); font-size: .8rem; }
+.linguas a, .linguas .lang-atual { padding: .1rem .35rem; border-radius: 5px; text-decoration: none; }
+.linguas a { color: var(--muted); }
+.linguas a:hover { color: var(--ink); }
+.linguas .lang-atual { color: var(--accent); font-weight: 600; }
