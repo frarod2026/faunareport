@@ -58,6 +58,7 @@ STRINGS = {
     "en": {
         "nav_home": "Home", "nav_topics": "Topics", "nav_radar": "Radar",
         "nav_search": "Search", "nav_about": "About",
+        "tagline": "What's happening to the world's animals, right now.",
         "skip": "Skip to content",
         "latest": "Latest", "written_here": "Written here", "read_next": "Read next",
         "in_this_article": "In this article", "article": "Article", "page": "Page",
@@ -91,6 +92,7 @@ STRINGS = {
     "pt": {
         "nav_home": "Início", "nav_topics": "Temas", "nav_radar": "Radar",
         "nav_search": "Buscar", "nav_about": "Sobre",
+        "tagline": "O que está acontecendo com os animais do mundo, agora.",
         "skip": "Pular para o conteúdo",
         "latest": "Mais recente", "written_here": "Escrito aqui", "read_next": "Leia a seguir",
         "in_this_article": "Neste artigo", "article": "Artigo", "page": "Página",
@@ -209,10 +211,15 @@ def parse_date(value):
 EN_MONTHS = ["January", "February", "March", "April", "May", "June",
              "July", "August", "September", "October", "November", "December"]
 
+PT_MONTHS = ["janeiro", "fevereiro", "março", "abril", "maio", "junho",
+             "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"]
+
 
 def pt_date(dt):
     if not dt:
         return ""
+    if L["code"] == "pt":
+        return "%d de %s de %d" % (dt.day, PT_MONTHS[dt.month - 1], dt.year)
     return "%s %d, %d" % (EN_MONTHS[dt.month - 1], dt.day, dt.year)
 
 
@@ -677,7 +684,7 @@ def layout(config, *, head_html, body, active="", theme="dark", alt_path=None, h
         "homehref": urlp("/"),
         "abouthref": urlp("/about/"),
         "site": esc(config["site_name"]),
-        "tagline": esc(config["tagline"]),
+        "tagline": esc(T("tagline")),
         "nav": "\n        ".join(
             [nav("/", T("nav_home")), nav("/topics/", T("nav_topics")),
              nav("/radar/", T("nav_radar")), nav("/search/", T("nav_search")),
