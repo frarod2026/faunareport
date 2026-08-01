@@ -1,4 +1,3 @@
-[2026-07-25-what-protected-areas-protect.md](https://github.com/user-attachments/files/30622709/2026-07-25-what-protected-areas-protect.md)
 ---
 title: O que uma área protegida realmente protege
 description: Uma linha no mapa não é uma cerca. Por que o mundo consegue bater suas metas de área "protegida" enquanto a vida selvagem continua desaparecendo dentro dos limites.
