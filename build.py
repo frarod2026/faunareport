@@ -77,9 +77,9 @@ STRINGS = {
         "find": "Find", "search_title": "Search",
         "search_desc": "Search Fauna Report articles.",
         "search_placeholder": "Search articles\u2026",
-        "search_type": "Type to search %d articles.",
+        "search_type": "Type to search %s articles.",
         "search_unavailable": "Search is unavailable right now.",
-        "result_one": "result", "result_many": "results",
+        "result_one": "result", "result_many": "results", "result_for": "for",
         "share": "Share", "copy_link": "Copy link", "copied": "Copied!",
         "footer_note": ("The articles here are written for this site. The Radar links to "
                         "other people\u2019s work, hosted by them."),
@@ -111,9 +111,9 @@ STRINGS = {
         "find": "Buscar", "search_title": "Buscar",
         "search_desc": "Busque nos artigos do Fauna Report.",
         "search_placeholder": "Buscar artigos\u2026",
-        "search_type": "Digite para buscar em %d artigos.",
+        "search_type": "Digite para buscar em %s artigos.",
         "search_unavailable": "A busca está indisponível no momento.",
-        "result_one": "resultado", "result_many": "resultados",
+        "result_one": "resultado", "result_many": "resultados", "result_for": "para",
         "share": "Compartilhar", "copy_link": "Copiar link", "copied": "Copiado!",
         "footer_note": ("Os artigos aqui são escritos para este site. O Radar traz links para "
                         "o trabalho de outros, hospedado por eles."),
@@ -688,9 +688,7 @@ def layout(config, *, head_html, body, active="", theme="dark", alt_path=None, h
         "nav": "\n        ".join(
             [nav("/", T("nav_home")), nav("/topics/", T("nav_topics")),
              nav("/radar/", T("nav_radar")), nav("/search/", T("nav_search")),
-             nav("/about/", T("nav_about"))]
-            if L["code"] == "en" else
-            [nav("/", T("nav_home")), nav("/about/", T("nav_about"))]),
+             nav("/about/", T("nav_about"))]),
         "langs": lang_switch(),
         "about": esc(T("nav_about")),
         "footer": esc(T("footer_note")),
@@ -816,9 +814,7 @@ def build_home(config, posts, radar):
 %s
     </section>""" % (esc(T("written_here")), "\n".join(blocos))
 
-    radar_bloco = ""
-    if L["code"] == "en":  # the Radar is English-only for now
-        radar_bloco = """    <section class="seccao radar" aria-labelledby="radar-titulo">
+    radar_bloco = """    <section class="seccao radar" aria-labelledby="radar-titulo">
       <div class="seccao-cabeca">
         <h2 id="radar-titulo" class="seccao-titulo">%(titulo)s</h2>
         <p class="seccao-nota">%(nota)s</p>
@@ -828,10 +824,10 @@ def build_home(config, posts, radar):
       </ul>
       <p class="mais"><a href="%(href)s">%(ver)s</a></p>
     </section>""" % {
-            "titulo": esc(T("radar_title")), "nota": esc(T("radar_home_note")),
-            "itens": "\n".join(radar_row(i) for i in radar[:6]),
-            "href": urlp("/radar/"), "ver": esc(T("see_full_radar")),
-        }
+        "titulo": esc(T("radar_title")), "nota": esc(T("radar_home_note")),
+        "itens": "\n".join(radar_row(i) for i in radar[:6]),
+        "href": urlp("/radar/"), "ver": esc(T("see_full_radar")),
+    }
 
     body = "\n".join(x for x in [hero, grelha, radar_bloco] if x)
     head_html = head(config, title=config["site_name"], description=config["description"],
@@ -1023,25 +1019,23 @@ def build_radar(config, radar):
     """Aggregation page: noindex on purpose (see README)."""
     body = """    <section class="seccao radar radar-pagina" aria-labelledby="radar-titulo">
       <div class="seccao-cabeca">
-        <h1 id="radar-titulo" class="seccao-titulo">Radar</h1>
-        <p class="seccao-nota">
-          A selection of what came out elsewhere. Title, a short excerpt and a link to the source —
-          the full text stays where it was published. %d items, refreshed on every build.
-        </p>
+        <h1 id="radar-titulo" class="seccao-titulo">%(titulo)s</h1>
+        <p class="seccao-nota">%(nota)s</p>
       </div>
       <ul class="radar-lista">
-%s
+%(itens)s
       </ul>
-      <p class="mudo fontes">Sources: %s.</p>
-    </section>""" % (
-        len(radar),
-        "\n".join(radar_row(i) for i in radar),
-        ", ".join(esc(f["name"]) for f in config.get("feeds", [])),
-    )
-    head_html = head(config, title="Radar",
-                     description="A selection of articles published on other sites, linking to the source.",
-                     path="/radar/", noindex=True)
-    write(DIST / "radar" / "index.html", layout(config, head_html=head_html, body=body, active="Radar"))
+      <p class="mudo fontes">%(fontes)s</p>
+    </section>""" % {
+        "titulo": esc(T("radar_title")),
+        "nota": esc(T("radar_page_note", len(radar))),
+        "itens": "\n".join(radar_row(i) for i in radar),
+        "fontes": esc(T("sources", ", ".join(f["name"] for f in config.get("feeds", [])))),
+    }
+    head_html = head(config, title=T("radar_title"),
+                     description=T("radar_desc"), path="/radar/", noindex=True)
+    write(outp("radar", "index.html"),
+          layout(config, head_html=head_html, body=body, active=T("nav_radar")))
 
 
 def qualifying_topics(posts, minimum=2):
@@ -1065,27 +1059,30 @@ def build_topics(config, posts, topic_tags):
             if t in topic_tags:
                 tag_map.setdefault(t, []).append(p)
 
+    def art_word(n):
+        return T("article_one") if n == 1 else T("article_many")
+
     # index of all topics
     if tag_map:
         rows = []
         for tag in sorted(tag_map, key=lambda t: (-len(tag_map[t]), t.lower())):
             n = len(tag_map[tag])
             rows.append(
-                '        <li><a href="/topics/%s/"><span class="topic-nome">%s</span>'
-                '<span class="topic-conta">%d article%s</span></a></li>'
-                % (slugify(tag), esc(tag), n, "" if n == 1 else "s"))
+                '        <li><a href="%s"><span class="topic-nome">%s</span>'
+                '<span class="topic-conta">%d %s</span></a></li>'
+                % (urlp("/topics/%s/" % slugify(tag)), esc(tag), n, esc(art_word(n))))
         body = """    <section class="seccao">
-      <p class="sobrancelha">Browse</p>
-      <h1 class="seccao-titulo">Topics</h1>
+      <p class="sobrancelha">%(browse)s</p>
+      <h1 class="seccao-titulo">%(topics)s</h1>
       <ul class="topic-lista">
-%s
+%(rows)s
       </ul>
-    </section>""" % "\n".join(rows)
-        head_html = head(config, title="Topics",
-                         description="Browse Fauna Report by topic — conservation, ecology, taxonomy and more.",
+    </section>""" % {"browse": esc(T("browse")), "topics": esc(T("topics_title")),
+                     "rows": "\n".join(rows)}
+        head_html = head(config, title=T("topics_title"), description=T("topics_desc"),
                          path="/topics/")
-        write(DIST / "topics" / "index.html",
-              layout(config, head_html=head_html, body=body, active="Topics"))
+        write(outp("topics", "index.html"),
+              layout(config, head_html=head_html, body=body, active=T("nav_topics")))
 
     # one page per tag
     for tag, items in tag_map.items():
@@ -1093,67 +1090,61 @@ def build_topics(config, posts, topic_tags):
                        reverse=True)
         grid = "\n".join(card(p) for p in items)
         body = """    <section class="seccao">
-      <p class="sobrancelha"><a href="/topics/">Topics</a></p>
-      <h1 class="seccao-titulo">%s</h1>
-      <p class="seccao-nota">%d article%s on this topic.</p>
+      <p class="sobrancelha"><a href="%(topicshref)s">%(topics)s</a></p>
+      <h1 class="seccao-titulo">%(tag)s</h1>
+      <p class="seccao-nota">%(count)s</p>
       <div class="grelha" style="margin-top:2rem">
-%s
+%(grid)s
       </div>
-    </section>""" % (esc(tag), len(items), "" if len(items) == 1 else "s", grid)
-        head_html = head(config, title="%s — Topics" % tag.capitalize(),
-                         description="Fauna Report articles about %s." % tag,
+    </section>""" % {"topicshref": urlp("/topics/"), "topics": esc(T("topics_title")),
+                     "tag": esc(tag), "count": esc(T("articles_on_topic", len(items), art_word(len(items)))),
+                     "grid": grid}
+        head_html = head(config, title="%s — %s" % (tag.capitalize(), T("topics_title")),
+                         description=T("topics_desc"),
                          path="/topics/%s/" % slugify(tag))
-        write(DIST / "topics" / slugify(tag) / "index.html",
-              layout(config, head_html=head_html, body=body, active="Topics"))
+        write(outp("topics", slugify(tag), "index.html"),
+              layout(config, head_html=head_html, body=body, active=T("nav_topics")))
 
     return sorted(tag_map, key=lambda t: (-len(tag_map[t]), t.lower()))
 
 
 def build_search(config, posts):
     """A JSON index + a tiny vanilla-JS search page (no libraries, no tracking)."""
-    base = config["base_url"].rstrip("/")
     index = [{
         "title": p["title"],
-        "url": "/articles/%s/" % p["slug"],
+        "url": urlp("/articles/%s/" % p["slug"]),
         "desc": p["description"],
         "tags": p["tags"],
         "date": pt_date(p["date"]),
     } for p in posts if not p["noindex"]]
-    write(DIST / "search-index.json", json.dumps(index, ensure_ascii=False))
+    write(outp("search-index.json"), json.dumps(index, ensure_ascii=False))
 
-    body = """    <section class="seccao">
-      <p class="sobrancelha">Find</p>
-      <h1 class="seccao-titulo">Search</h1>
-      <div class="busca">
-        <input type="search" id="q" placeholder="Search articles\u2026"
-               autocomplete="off" aria-label="Search articles">
-        <p class="busca-nota" id="busca-nota">Type to search %d articles.</p>
-        <ul class="busca-res" id="res"></ul>
-      </div>
-    </section>
+    js = """
     <script>
     (function () {
       var input = document.getElementById('q');
       var res = document.getElementById('res');
       var note = document.getElementById('busca-nota');
+      var TYPE = __TYPE__, ONE = __ONE__, MANY = __MANY__, FOR = __FOR__, UNAVAIL = __UNAVAIL__;
       var data = [];
-      fetch('/search-index.json').then(function (r) { return r.json(); })
+      fetch('__INDEXURL__').then(function (r) { return r.json(); })
         .then(function (j) { data = j; var q = param(); if (q) { input.value = q; run(q); } })
-        .catch(function () { note.textContent = 'Search is unavailable right now.'; });
+        .catch(function () { note.textContent = UNAVAIL; });
       function param() {
         var m = location.search.match(/[?&]q=([^&]+)/);
         return m ? decodeURIComponent(m[1].replace(/\\+/g, ' ')) : '';
       }
       function esc(s) { return s.replace(/[&<>"]/g, function (c) {
         return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+      function typeMsg(n) { return TYPE.replace('%COUNT%', n); }
       function run(q) {
         q = q.trim().toLowerCase();
-        if (!q) { res.innerHTML = ''; note.textContent = 'Type to search ' + data.length + ' articles.'; return; }
+        if (!q) { res.innerHTML = ''; note.textContent = typeMsg(data.length); return; }
         var hits = data.filter(function (a) {
           var hay = (a.title + ' ' + a.desc + ' ' + a.tags.join(' ')).toLowerCase();
           return q.split(/\\s+/).every(function (w) { return hay.indexOf(w) !== -1; });
         });
-        note.textContent = hits.length + ' result' + (hits.length === 1 ? '' : 's') + ' for \u201c' + q + '\u201d';
+        note.textContent = hits.length + ' ' + (hits.length === 1 ? ONE : MANY) + ' ' + FOR + ' \u201c' + q + '\u201d';
         res.innerHTML = hits.map(function (a) {
           return '<li><a href="' + a.url + '"><span class="busca-titulo">' + esc(a.title) +
                  '</span><span class="busca-desc">' + esc(a.desc) + '</span></a></li>';
@@ -1161,12 +1152,33 @@ def build_search(config, posts):
       }
       input.addEventListener('input', function () { run(input.value); });
     })();
-    </script>""" % len(index)
-    head_html = head(config, title="Search",
-                     description="Search Fauna Report articles.",
-                     path="/search/", noindex=True)
-    write(DIST / "search" / "index.html",
-          layout(config, head_html=head_html, body=body, active="Search"))
+    </script>"""
+    import json as _json
+    js = (js.replace("__TYPE__", _json.dumps(T("search_type", "%COUNT%")))
+            .replace("__ONE__", _json.dumps(T("result_one")))
+            .replace("__MANY__", _json.dumps(T("result_many")))
+            .replace("__FOR__", _json.dumps(T("result_for")))
+            .replace("__UNAVAIL__", _json.dumps(T("search_unavailable")))
+            .replace("__INDEXURL__", urlp("/search-index.json")))
+
+    body = """    <section class="seccao">
+      <p class="sobrancelha">%(find)s</p>
+      <h1 class="seccao-titulo">%(searchword)s</h1>
+      <div class="busca">
+        <input type="search" id="q" placeholder="%(placeholder)s"
+               autocomplete="off" aria-label="%(searchword)s">
+        <p class="busca-nota" id="busca-nota">%(typemsg)s</p>
+        <ul class="busca-res" id="res"></ul>
+      </div>
+    </section>%(js)s""" % {
+        "find": esc(T("find")), "searchword": esc(T("search_title")),
+        "placeholder": esc(T("search_placeholder")),
+        "typemsg": esc(T("search_type", len(index))), "js": js,
+    }
+    head_html = head(config, title=T("search_title"),
+                     description=T("search_desc"), path="/search/", noindex=True)
+    write(outp("search", "index.html"),
+          layout(config, head_html=head_html, body=body, active=T("nav_search")))
 
 
 def build_page(config, page):
@@ -1418,10 +1430,11 @@ def main():
             build_post(config, p, posts, topic_tags)
         for p in pages:
             build_page(config, p)
-        if lang.get("default"):        # English-only sections for now
+        if posts:                      # topics/search/radar wherever there are articles
             topics = build_topics(config, posts, topic_tags)
             build_search(config, posts)
             build_radar(config, radar)
+        if lang.get("default"):        # a single root 404 (served by the host)
             build_404(config)
         site_langs.append({"prefix": lang["prefix"], "posts": posts,
                            "pages": pages, "topics": topics})
