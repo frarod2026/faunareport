@@ -5,8 +5,8 @@ date: 2026-09-24
 updated: 2026-09-24
 tags: ecosystems, deforestation, policy
 slug: amazon-deforestation-now
-image:
-image_alt:
+image: amazon-deforestation-now.jpg
+image_alt: "Aerial view of a forest canopy"
 ---
 
 Coverage of the Amazon tends to arrive in one of two moods: alarm, or relief, depending on which number got published that week. Neither mood, taken alone, gives you an accurate picture. The actual situation, as of the most recent data, is specific enough to describe properly — and it's more encouraging than the Amazon headlines of the early 2020s, without being anything close to resolved.
