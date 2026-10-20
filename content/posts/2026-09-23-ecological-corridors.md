@@ -5,8 +5,8 @@ date: 2026-09-23
 updated: 2026-09-23
 tags: conservation, connectivity, ecology
 slug: ecological-corridors
-image:
-image_alt:
+image: ecological-corridors.jpg
+image_alt: "Elephants crossing a road"
 ---
 
 Protected areas get most of the attention in conservation, and for good reason — they're where species live. But a species confined to one protected area, with no way to reach another, is in a different and quieter kind of trouble than the reserve's boundary map suggests. The fix for that problem has a name: an ecological corridor. It's a simple idea with more evidence behind it than most conservation tools get, and it's easy to describe wrong.
