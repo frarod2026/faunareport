@@ -54,3 +54,5 @@ The vaquita's story isn't one of habitat loss, climate change, or a slow multi-g
 - [Scientific American — Two Vaquita Calves Offer Flicker of Hope for Most Endangered Porpoises on Earth](https://www.scientificamerican.com/article/two-vaquita-calves-offer-flicker-of-hope-for-most-endangered-porpoises-on/) — the 2025 survey finding seven to ten individuals and new calves, and expert reaction to the count.
 - [Sea Shepherd Conservation Society — Results of the 2025 Vaquita Monitoring Effort](https://seashepherd.org/2025/10/28/results-of-the-2025-vaquita-monitoring-effort/) — full methodology of the acoustic and visual survey behind the 2025 estimate.
 - [Animal Welfare Institute — New Survey: No More Than Eight Vaquita Remain](https://awionline.org/news/new-survey-no-more-than-eight-vaquita-remain/) — the 2020 Mexican government agreement on gillnet restrictions and the enforcement gap since.
+
+- *Illustrative photo: dolphins. The vaquita is very rarely photographed.*
