@@ -54,3 +54,5 @@ A história da vaquita não é de perda de habitat, mudança climática, ou um d
 - [Scientific American — Two Vaquita Calves Offer Flicker of Hope for Most Endangered Porpoises on Earth](https://www.scientificamerican.com/article/two-vaquita-calves-offer-flicker-of-hope-for-most-endangered-porpoises-on/) — o levantamento de 2025 encontrando de sete a dez indivíduos e novos filhotes, e a reação de especialistas à contagem.
 - [Sea Shepherd Conservation Society — Results of the 2025 Vaquita Monitoring Effort](https://seashepherd.org/2025/10/28/results-of-the-2025-vaquita-monitoring-effort/) — a metodologia completa do levantamento acústico e visual por trás da estimativa de 2025.
 - [Animal Welfare Institute — New Survey: No More Than Eight Vaquita Remain](https://awionline.org/news/new-survey-no-more-than-eight-vaquita-remain/) — o acordo do governo mexicano de 2020 sobre restrições a redes de emalhar e a lacuna de fiscalização desde então.
+
+*Foto ilustrativa: golfinhos. A vaquita raramente é fotografada.*
