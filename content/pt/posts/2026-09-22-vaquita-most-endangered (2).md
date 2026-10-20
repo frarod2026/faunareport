@@ -6,7 +6,7 @@ updated: 2026-09-22
 tags: espécies, extinção, conservação
 slug: vaquita-most-endangered
 image: vaquita-most-endangered.jpg
-image_alt: "Uma marsopa nadando na água"
+image_alt: "Dois golfinhos nadando à superfície de uma água calma"
 ---
 
 A vaquita é uma pequena e tímida marsopa que a maioria das pessoas nunca verá nem em fotografia, quanto mais o próprio animal — e essa obscuridade faz parte da história. Ela vive em exatamente um único lugar do planeta, está desaparecendo por um motivo que não tem nada a ver com alguém querer sua morte, e a contagem mais recente estima toda a sua população global entre sete e dez indivíduos.
