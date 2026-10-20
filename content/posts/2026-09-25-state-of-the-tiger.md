@@ -5,8 +5,8 @@ date: 2026-09-25
 updated: 2026-09-25
 tags: species, conservation, IUCN
 slug: state-of-the-tiger
-image:
-image_alt:
+image: state-of-the-tiger.jpg
+image_alt: "A tiger wading into the water"
 ---
 
 For most of the last hundred years, any story about wild tigers was a story about decline. That changed, quietly, in the past decade: global tiger numbers have gone up, not down, for the first time since anyone started counting seriously. It's a genuine success. It's also a much smaller success than the good headlines suggest, and the tiger's own conservation status says so directly.
