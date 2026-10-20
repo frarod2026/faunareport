@@ -5,8 +5,8 @@ date: 2026-09-25
 updated: 2026-09-25
 tags: espécies, conservação, IUCN
 slug: state-of-the-tiger
-image:
-image_alt:
+image: state-of-the-tiger.jpg
+image_alt: "Um tigre a entrar na água"
 ---
 
 Durante a maior parte dos últimos cem anos, qualquer notícia sobre tigres selvagens era uma notícia de declínio. Isso mudou, silenciosamente, na última década: o número global de tigres subiu, em vez de cair, pela primeira vez desde que alguém começou a contar a sério. É uma conquista genuína. Também é uma conquista bem menor do que as boas manchetes sugerem, e o próprio status de conservação do tigre diz isso diretamente.
