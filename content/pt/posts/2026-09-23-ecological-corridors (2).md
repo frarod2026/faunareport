@@ -5,8 +5,8 @@ date: 2026-09-23
 updated: 2026-09-23
 tags: conservação, conectividade, ecologia
 slug: ecological-corridors
-image:
-image_alt:
+image: ecological-corridors.jpg
+image_alt: "Elefantes a atravessar a estrada"
 ---
 
 As áreas protegidas recebem a maior parte da atenção na conservação, e com razão — é onde as espécies vivem. Mas uma espécie confinada a uma única área protegida, sem forma de chegar a outra, está num tipo de apuro diferente e mais silencioso do que o mapa dos limites da reserva sugere. A solução para esse problema tem nome: **corredor ecológico**. É uma ideia simples, com mais evidência por trás dela do que a maioria das ferramentas de conservação recebe, e é fácil de descrever errado.
