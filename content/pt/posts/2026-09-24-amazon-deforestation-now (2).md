@@ -5,8 +5,8 @@ date: 2026-09-24
 updated: 2026-09-24
 tags: ecossistemas, desmatamento, políticas
 slug: amazon-deforestation-now
-image:
-image_alt:
+image: amazon-deforestation-now.jpg
+image_alt: "Vista aérea de uma floresta"
 ---
 
 A cobertura sobre a Amazônia costuma chegar em um de dois tons: alarme, ou alívio, dependendo de qual número foi publicado naquela semana. Nenhum dos dois tons, sozinho, dá uma imagem precisa. A situação real, segundo os dados mais recentes, é específica o suficiente para ser descrita com cuidado — e é mais animadora do que as manchetes da Amazônia do início dos anos 2020, sem estar perto de resolvida.
