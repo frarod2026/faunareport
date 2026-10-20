@@ -5,8 +5,8 @@ date: 2026-09-22
 updated: 2026-09-22
 tags: species, extinction, conservation
 slug: vaquita-most-endangered
-image:
-image_alt:
+image: vaquita-most-endangered.jpg
+image_alt: "A vaquita porpoise in the water"
 ---
 
 The vaquita is a small, shy porpoise that most people will never see a photograph of, let alone the animal itself — and that obscurity is part of the story. It lives in exactly one place on Earth, it's disappearing for a reason that has nothing to do with anyone wanting it dead, and the most recent count puts its entire global population somewhere between seven and ten individuals.
